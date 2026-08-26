@@ -6,19 +6,20 @@
 <title>Mozeframe</title>
 
 <!-- IKON TAB.
-     Berkasnya duduk di root repo, sejajar index.html -- sama seperti folder bg/.
+     Berkasnya ada di ikon_generator/, BUKAN di root -- mengikuti susunan repo
+     yang sudah dibuat. Sama seperti bg/: salah satu tingkat berarti 404 tanpa
+     satu pun pesan galat, dan tab-nya cuma menampilkan ikon kosong.
 
      favicon.ico dipertahankan meski PNG sudah cukup untuk browser modern: ia
-     memuat 16/32/48 sekaligus, dan sebagian browser lama hanya mencari
-     /favicon.ico tanpa membaca <link> sama sekali.
+     memuat 16/32/48 sekaligus dalam satu berkas.
 
      apple-touch-icon SENGAJA tidak transparan. iOS mengganti area transparan
      jadi HITAM lalu menerapkan masker kotak-membulatnya sendiri, jadi ikon
      bundar transparan di sana berubah jadi lingkaran hitam bergerigi. -->
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="ikon_generator/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="ikon_generator/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="ikon_generator/icon-192.png">
+<link rel="apple-touch-icon" href="ikon_generator/apple-touch-icon.png">
 <style>
 /* =========================================================================
    TEMA — diambil dari SISTEM DESAIN v2 di panel lama, bukan dikarang ulang.
