@@ -553,8 +553,12 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
    Logika crossfade + titik fokus diambil apa adanya dari panel lama: sudah
    terbukti, dan menulis ulang cuma menambah tempat yang bisa berbeda.
    ========================================================================= */
+/* Jalurnya "bg/", BUKAN "img/bg/" seperti di panel lama: di repo generator
+   folder gambarnya bersebelahan dengan index.html, bukan di dalam img/.
+   Salah satu tingkat berarti 31 permintaan 404 dan latar hitam polos tanpa
+   satu pun pesan galat -- terlihat persis seperti fitur yang tidak jadi. */
 const MOZE_BG = Array.from({ length: 31 }, (_, i) =>
-    "img/bg/fj" + String(i + 1).padStart(2, "0") + ".jpg");
+    "bg/fj" + String(i + 1).padStart(2, "0") + ".jpg");
 
 /* Wajah di ke-31 gambar mengumpul di x 48-52%, y 22-28% -- panel manhua hampir
    selalu menaruh kepala di sepertiga atas. Tiga yang di bawah komposisinya beda. */
