@@ -4,6 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mozeframe</title>
+
+<!-- IKON TAB.
+     Berkasnya duduk di root repo, sejajar index.html -- sama seperti folder bg/.
+
+     favicon.ico dipertahankan meski PNG sudah cukup untuk browser modern: ia
+     memuat 16/32/48 sekaligus, dan sebagian browser lama hanya mencari
+     /favicon.ico tanpa membaca <link> sama sekali.
+
+     apple-touch-icon SENGAJA tidak transparan. iOS mengganti area transparan
+     jadi HITAM lalu menerapkan masker kotak-membulatnya sendiri, jadi ikon
+     bundar transparan di sana berubah jadi lingkaran hitam bergerigi. -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 /* =========================================================================
    TEMA — diambil dari SISTEM DESAIN v2 di panel lama, bukan dikarang ulang.
