@@ -2983,7 +2983,7 @@
                 Auto harvest &amp; seller untuk Grow a Garden. Jalankan di akun yang memang dipakai memanen — <strong>bukan</strong> akun kaitun, karena keduanya sama-sama menggerakkan karakter dan akan saling rebut.
             </p>
             <div style="position: relative;">
-                <textarea id="quick-harvest-script" readonly style="width: 100%; height: 110px; background: rgba(0,0,0,0.5); color: #34d399; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--fs-sm); border: 1px solid var(--glass-line); border-radius: var(--r-md); padding: 12px; resize: vertical; line-height: 1.55;">Silakan Login terlebih dahulu...</textarea>
+                <textarea id="quick-harvest-script" readonly style="width: 100%; height: 70px; background: rgba(0,0,0,0.5); color: #34d399; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--fs-sm); border: 1px solid var(--glass-line); border-radius: var(--r-md); padding: 12px; resize: vertical; line-height: 1.55;">memuat...</textarea>
                 <button onclick="copyLoaderSnippet('quick-harvest-script', 'Harvest')" class="u-btn u-btn-primary u-btn-sm" style="position: absolute; top: 10px; right: 10px; width: auto;">📋 Copy</button>
             </div>
         </div>
@@ -2997,7 +2997,7 @@
                 Pemindai &amp; pengirim mail. Ingat batas server: <strong>cooldown 10 detik</strong> dan <strong>5 mail per hari per penerima</strong> — kira-kira 100 item per target per hari, dan itu tidak bisa dinaikkan dari sisi script.
             </p>
             <div style="position: relative;">
-                <textarea id="quick-mailbox-script" readonly style="width: 100%; height: 110px; background: rgba(0,0,0,0.5); color: #34d399; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--fs-sm); border: 1px solid var(--glass-line); border-radius: var(--r-md); padding: 12px; resize: vertical; line-height: 1.55;">Silakan Login terlebih dahulu...</textarea>
+                <textarea id="quick-mailbox-script" readonly style="width: 100%; height: 70px; background: rgba(0,0,0,0.5); color: #34d399; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: var(--fs-sm); border: 1px solid var(--glass-line); border-radius: var(--r-md); padding: 12px; resize: vertical; line-height: 1.55;">memuat...</textarea>
                 <button onclick="copyLoaderSnippet('quick-mailbox-script', 'MailBox')" class="u-btn u-btn-primary u-btn-sm" style="position: absolute; top: 10px; right: 10px; width: auto;">📋 Copy</button>
             </div>
         </div>
@@ -4893,10 +4893,10 @@ local r = (type(request) == \"function\" and request) or (type(http_request) == 
             // game:HttpGet tidak selalu mengikuti redirect; tanpa subdomain ini
             // loadstring menerima teks dan gagal tanpa pesan apa pun.
             //
-            // CATATAN: Harvest dan MailBox BELUM membaca PanelKey (script.txt nol
-            // getgenv, mailv2.lua tidak punya kunci itu). Baris key tetap disertakan
-            // supaya formatnya seragam dan langsung benar begitu keduanya diberi
-            // integrasi panel -- tapi hari ini ia tidak berpengaruh.
+            // TANPA gerbang login, dan itu disengaja: Harvest dan MailBox tidak
+            // membaca PanelKey sama sekali (script.txt nol getgenv, mailv2.lua
+            // tidak punya kunci itu). Menuntut login untuk menyalin loadstring
+            // yang tidak memakainya cuma menghalangi tanpa memberi apa pun.
             const LOADER_LAIN = [
                 ['quick-harvest-script', 'df3ad4e7-12d4-4e45-bf16-921ebc486256'],
                 ['quick-mailbox-script', '389ddb87-5648-42d3-852b-2e28b353fca1'],
@@ -4904,17 +4904,9 @@ local r = (type(request) == \"function\" and request) or (type(http_request) == 
             LOADER_LAIN.forEach(function (baris) {
                 const kotak = document.getElementById(baris[0]);
                 if (!kotak) return;
-                if (keyReady) {
-                    kotak.value = 'getgenv().MuzeAutoBuyConfig = {\n'
-                        + '    PanelKey = "' + FULL_PANEL_KEY + '"\n'
-                        + '}\n'
-                        + 'loadstring(game:HttpGet("https://loader.luaegis.net/scripts/v4/loaders/'
-                        + baris[1] + '.lua"))()';
-                    kotak.style.color = "#34d399";
-                } else {
-                    kotak.value = "\u26a0 Panel Key belum termuat.\n\nLogin dulu, lalu buka tab ini lagi.";
-                    kotak.style.color = "#f87171";
-                }
+                kotak.value = 'loadstring(game:HttpGet("https://loader.luaegis.net/scripts/v4/loaders/'
+                    + baris[1] + '.lua"))()';
+                kotak.style.color = "#34d399";
             });
         }
         
@@ -5167,7 +5159,7 @@ local r = (type(request) == \"function\" and request) or (type(http_request) == 
         if (!kotak) return;
         const text = kotak.value;
         if (!text.includes('loadstring(')) {
-            alert("Panel Key belum termuat \u2014 login dulu, lalu buka tab ini lagi.");
+            alert("Snippet belum siap. Buka ulang tab Loader.");
             return;
         }
         navigator.clipboard.writeText(text).then(function () {
