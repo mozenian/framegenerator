@@ -386,6 +386,7 @@ input:focus, select:focus {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 5px;
 }
+.cari { margin: 8px 0 0; }
 .daftar::-webkit-scrollbar { width: 8px; }
 .daftar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.13);
@@ -746,6 +747,41 @@ const FHSEEDS = ["Maple Carrot","Maple Strawberry","Maple Blueberry","Maple Tuli
    Mencampurnya membuat gear yang tidak ada di dunia itu tidak pernah cocok. */
 const FHGEARS = ["Syrup Sprinkler","Super Syrup Sprinkler","Syrup Watering Can","Super Syrup Watering Can","Trowel","Harp","Bull Horn","Wind Staff","Rare Magic Mail","Legendary Magic Mail","Super Magic Mail"];
 
+/* =========================================================================
+   KATALOG AUCTION -- disalin utuh dari panel lama (index.html).
+
+   Auctioneer mengacak isinya tiap 1800 detik dan bisa mengeluarkan barang dari
+   kategori mana pun, jadi daftarnya sengaja gabungan SEMUA katalog di atas
+   ditambah empat kategori yang tidak dipakai tab lain. Sumbernya modul game:
+   EggData.Data[].EggName, SeedPackData.Data[].PackName, CrateData.GetAllCrates().
+   "Test Egg" dibuang -- itu entri dev, tidak pernah muncul di auction live.
+   ========================================================================= */
+const AUCTION_EGGS = ["Big Egg","Common Egg","Exclusive Harvest Egg","Fall Big Egg","Fall Common Egg","Fall Mega Egg","Fall Rainbow Egg","Mega Egg","Rainbow Egg","Sugar Egg"];
+
+const AUCTION_SEEDPACKS = ["Common Fall Seed Pack","Common Seed Pack","Ghost Pepper Pack","Harvest Pack","Legendary Fall Seed Pack","Legendary Seed Pack","Mythic Fall Seed Pack","Mythic Seed Pack","Rare Fall Seed Pack","Rare Seed Pack","Secret Fall Seed Pack","Secret Seed Pack","Super Fall Seed Pack","Super Seed Pack","Uncommon Fall Seed Pack","Uncommon Seed Pack"];
+
+const AUCTION_CRATES = ["Arch Crate","Bear Trap Crate","Bench Crate","Boombox Crate","Bridge Crate","Cobblestone Crate","Common Guild Crate","Conveyor Crate","Epic Guild Crate","Fall Cosmetic Crate","Fall Structure Crate","Fence Crate","Fourth Of July Crate","Ladder Crate","Lantern Crate","Legendary Guild Crate","Light Crate","Mythic Guild Crate","Owner Door Crate","Picture Frame Crate","Rake Crate","Rare Guild Crate","Roleplay Crate","Seesaw Crate","Sign Crate","Spring Crate","Super Guild Crate","Teleporter Pad Crate","Uncommon Guild Crate"];
+
+/* Auction memakai NAMA TAMPILAN pet ("Bald Eagle"), sedangkan WILDPETS di atas
+   memakai nama tipe ("BaldEagle") karena dicocokkan ke name pattern
+   "WildPet_{Type}_WildPet_{GUID}". Dua daftar berbeda, sengaja. */
+const PETS = ["Bald Eagle","Bear","Bee","Black Dragon","Bunny","Butterfly","Chocolate Lab","Deer","Dog","Fat Cat","Firefly","Fox","Frog","Golden Dragonfly","Hedgehog","Ice Serpent","Jackalope","Jandel Monkey","Kitsune","Monkey","Muffin Man","Owl","Raccoon","Red Panda","Robin","Scarecrow","Shadow Dragon","Squirrel","Sugar Bunny","Swan","Turkey","Turtle","Unicorn","Wolf"];
+
+/* Seed yang tidak ada di toko W1 (SEEDS) maupun W2 (FHSEEDS). Penamaannya
+   memang beda dari toko: auction memakai "Gold"/"Mega"/"Rainbow", sedangkan
+   SEEDS menyimpannya sebagai "Gold Seed"/"Mega Seed"/"Rainbow Seed". Sisi Lua
+   mencocokkan setelah membuang spasi, jadi "Gold Seed" TIDAK akan kena lot
+   "Gold" -- keduanya sengaja dibiarkan ada. */
+const AUCTION_SEEDS_EXTRA = ["Gold","Honeysuckle","Mega","Potato","Rainbow","Spirit Acorn","Spirit Banana","Spirit Cherry","Spirit Coconut","Spirit Dragon Fruit","Spirit Grape","Spirit Mango","Spirit Poison Apple","Spirit Pomegranate","Spirit Sunflower","Spirit Venom Spitter","Spirit Venus Fly Trap","Sugar Cane","Wheat"];
+
+/* "All" dibuang: di auction ia bukan nama barang, dan mencentangnya tidak
+   pernah berarti "semua lot". */
+const AUCTION_ITEMS = [...new Set(
+    [].concat(SEEDS, FHSEEDS, AUCTION_SEEDS_EXTRA, GEARS, PETS,
+              AUCTION_EGGS, AUCTION_SEEDPACKS, AUCTION_CRATES)
+      .filter(n => n && n !== "All")
+)].sort((a, b) => a.localeCompare(b));
+
 const RESEP = ["Blueberry Muffin","Pumpkin Muffin","Carrot Muffin","Rainbow Muffin"];
 const UKURAN_TAME = ["Big","Huge"];
 const MODE_NILAI = [["off","Mati"], ["min","Minimal"], ["max","Maksimal"]];
@@ -809,7 +845,7 @@ w1: [
  ]},
  { judul: "Auction", ket: "CurrentPrice satu-satunya angka yang benar; lot Robux-only punya startPrice kecil yang menyamar jadi murah.", medan: [
    { k: "AutoAuction",     t: "bool",  l: "Auto auction",     d: false },
-   { k: "AuctionItems",    t: "larik", l: "Barang diincar",   opsi: SEEDS },
+   { k: "AuctionItems",    t: "larik", l: "Barang diincar",   opsi: AUCTION_ITEMS },
    { k: "AuctionMaxBid",   t: "teks",  l: "Bid maksimal",     d: "0" },
    { k: "AuctionMinSaldo", t: "teks",  l: "Saldo minimum",    d: "0" },
  ]},
@@ -972,9 +1008,33 @@ function buatMedan(dunia, m) {
             kotak.appendChild(p);
         }
 
+        /* Kotak cari hanya untuk daftar panjang. Auction sekarang 241 item
+           sementara .daftar cuma setinggi 208px -- "Common Egg" ada belasan
+           layar gulir dari atas, praktis tidak ketemu. Ambang 40 supaya daftar
+           pendek (resep, ukuran tame) tetap polos tanpa kotak menganggur. */
+        let cari = null;
+        if (m.opsi.length > 40) {
+            cari = document.createElement("input");
+            cari.type = "text";
+            cari.className = "cari";
+            cari.placeholder = "Cari dari " + m.opsi.length + " barang...";
+            cari.oninput = () => {
+                const q = cari.value.toLowerCase().trim();
+                for (const p of kotak.querySelectorAll("label.pilih"))
+                    p.style.display = p.textContent.toLowerCase().includes(q) ? "" : "none";
+            };
+            bungkus.appendChild(cari);
+        }
+
         sakelarSemua.onclick = () => {
-            const semua = terpilih().length < m.opsi.length;
-            for (const cb of kotak.querySelectorAll("input")) {
+            /* Sengaja hanya menyentuh yang LOLOS pencarian. Mencentang 241 item
+               sekaligus hampir tidak pernah yang dimaksud; yang berguna itu
+               mencari "Sprinkler" lalu memilih semua hasilnya. */
+            const tampak = [...kotak.querySelectorAll("label.pilih")]
+                .filter(p => p.style.display !== "none");
+            const semua = tampak.some(p => !p.querySelector("input").checked);
+            for (const p of tampak) {
+                const cb = p.querySelector("input");
                 cb.checked = semua;
                 cb.dispatchEvent(new Event("change"));
             }
