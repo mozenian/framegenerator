@@ -374,6 +374,156 @@ input:focus, select:focus {
 .saklar.on .rel { background: linear-gradient(120deg, var(--ember), var(--ember-hot)); }
 .saklar.on .rel::after { transform: translateX(17px); background: #fff; }
 
+/* ---- GAME YANG DIDUKUNG ----
+   Digeser mendatar, BUKAN ditumpuk ke bawah: daftarnya akan terus bertambah dan
+   menu ini harus tetap muat satu layar. scroll-snap supaya berhentinya rapi di
+   tepi kartu, bukan menggantung di tengah dua kartu. */
+.dukungan { margin-top: 34px; }
+.dukungan-kepala {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+.dukungan-kepala h3 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+}
+.dukungan-kepala .jml {
+    font-size: 12px;
+    color: var(--ink-faint);
+}
+.panah {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+.panah .btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+}
+.rak {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 3px 2px 12px;
+}
+.rak::-webkit-scrollbar { height: 8px; }
+.rak::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.13);
+    border-radius: 8px;
+}
+/* Saat diseret, snap dan smooth-scroll harus mati -- keduanya melawan posisi
+   yang sedang ditulis tangan dan hasilnya kartu terlihat memantul sendiri. */
+.rak.seret {
+    cursor: grabbing;
+    user-select: none;
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+}
+.game {
+    flex: 0 0 270px;
+    scroll-snap-align: start;
+    padding: 17px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    transition: transform 0.32s cubic-bezier(0.22, 0.9, 0.3, 1), border-color 0.32s;
+}
+.game:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-soft);
+}
+.game h4 {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.3;
+}
+.game h4 small {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink-faint);
+}
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+}
+.titik {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+}
+.status b { font-weight: 600; }
+.status.online .titik {
+    background: #22c55e;
+    animation: denyut 2.4s ease-in-out infinite;
+}
+.status.online b { color: #4ade80; }
+.status.beta .titik {
+    background: var(--gold);
+    box-shadow: 0 0 0 3px rgba(232, 180, 74, 0.16);
+}
+.status.beta b { color: var(--gold); }
+/* Biru, bukan kuning: "Updating" harus terbaca beda dari "Beta" dalam sekali
+   lihat, dan dua nada emas bersebelahan praktis tidak bisa dibedakan. */
+.status.update .titik {
+    background: #60a5fa;
+    animation: denyut-biru 2.4s ease-in-out infinite;
+}
+.status.update b { color: #93c5fd; }
+.status.off .titik {
+    background: var(--ember-hot);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.16);
+}
+.status.off b { color: #fda4af; }
+@keyframes denyut {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18); }
+    50%      { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.04); }
+}
+@keyframes denyut-biru {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18); }
+    50%      { box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.04); }
+}
+.fitur {
+    margin: 0;
+    padding: 11px 0 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+    border-top: 1px solid var(--glass-line);
+}
+.fitur li {
+    position: relative;
+    padding-left: 15px;
+    font-size: 11.8px;
+    line-height: 1.45;
+    color: var(--ink-dim);
+}
+.fitur li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 7px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.75;
+}
+
 /* daftar centang */
 .daftar {
     max-height: 208px;
@@ -510,6 +660,21 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 <p>Rakit setelan World 1 dan World 2, lalu salin hasilnya. Setelan
                    ditanam langsung di script — tidak ada panggilan ke server.</p>
             </div>
+        </div>
+
+        <!-- Kartunya dibangun dari GAME_DIDUKUNG di script bawah, bukan ditulis
+             di sini: menambah game cukup satu entri di sana, markup ini tidak
+             perlu disentuh sama sekali. -->
+        <div class="dukungan">
+            <div class="dukungan-kepala">
+                <h3>Supported Games</h3>
+                <span class="jml" id="dukungan-jml"></span>
+                <div class="panah" id="dukungan-panah">
+                    <button class="btn" onclick="geserRak(-1)" title="Geser kiri">&#8592;</button>
+                    <button class="btn" onclick="geserRak(1)" title="Geser kanan">&#8594;</button>
+                </div>
+            </div>
+            <div class="rak" id="rak-game"></div>
         </div>
     </section>
 
@@ -1187,6 +1352,196 @@ function salin(id, tombol) {
         document.body.removeChild(ta);
     }
 }
+
+/* =========================================================================
+   GAME YANG DIDUKUNG
+
+   MENAMBAH GAME = TAMBAH SATU ENTRI DI SINI. Tidak ada markup yang ikut diubah,
+   dan urutan di larik ini adalah urutan tampil di rak.
+
+     nama   judul kartu
+     ket    baris kecil di bawah judul (boleh dikosongkan)
+     status "online" (hijau) | "beta" (emas) | "update" (biru) | "off" (merah)
+     fitur  daftar bullet, BAHASA INGGRIS -- kartu ini dibaca buyer luar
+
+   SOAL STATUS: yang dipakai loader harus benar-benar ada di _SCRIPT_WHITELIST
+   (hwid_bot.py) DAN di peta PlaceId (games.lua). Kalau belum ada di keduanya,
+   JANGAN diberi "online" -- loader tidak akan menemukan script-nya dan kartunya
+   jadi janji kosong yang berubah menjadi keluhan "ga work".
+   ========================================================================= */
+const GAME_DIDUKUNG = [
+    {
+        nama: "Grow a Garden 2",
+        ket: "World 1 · 4 places mapped, bot containment included",
+        status: "online",
+        fitur: [
+            "Auto buy seeds & gear on every restock",
+            "Auto plant, harvest, and sell",
+            "Daily Deal handled in a single trip",
+            "Auto tame wild pets, filtered by size & rainbow",
+            "Auto auction bidding across 241 items",
+            "Auto mail sender and inbox claimer",
+            "Value filters applied before buying",
+        ],
+    },
+    {
+        nama: "Fall Harvest",
+        ket: "World 2 · only reachable from Grow a Garden 2",
+        status: "online",
+        fitur: [
+            "Auto buy, plant, harvest, and sell",
+            "Auto quest",
+            "Bake Sale with 4 muffin recipes",
+            "Gear buying and auto watering",
+            "Steal from other players' plots",
+            "Selective fruit selling",
+            "Uproot and speedrun",
+            "Auto rejoin when the account gets stuck",
+        ],
+    },
+    {
+        nama: "Pet Simulator 99",
+        ket: "5 places · World 1-4 plus bot containment",
+        status: "online",
+        fitur: [
+            "Auto farm, orbs, and lootbags",
+            "Auto hatch that walks to the egg first",
+            "Auto quest, rank, and world progression",
+            "Auto claim daily and timed chests",
+            "Auto equip best pets",
+            "Lucky Block Breakout",
+            "Eternal Maze and Fiesta",
+            "Auto ultimate",
+        ],
+    },
+    {
+        nama: "Steal An Egg",
+        ket: "1 place · 7 players per server",
+        status: "update",
+        fitur: [
+            "Auto steal eggs from other arenas",
+            "Guard ragdoll cancel and anti knockback",
+            "Anti trap",
+            "Night raid",
+            "Noclip and speed boost",
+            "Auto hatch and plant",
+            "Auto fuse and auto equip best",
+            "Auto sell pets while stealing",
+            "Egg ESP and FPS boost",
+            "Anti AFK with forced rejoin",
+        ],
+    },
+    /* FAAR sengaja BUKAN "online". Script-nya nyata dan sudah terukur, tapi
+       berdiri sendiri: place 74729868188364 tidak ada di games.lua dan tidak
+       ada entri f=faar di _SCRIPT_WHITELIST, jadi Main Loader tidak akan
+       menyerahkannya. Naikkan ke "online" begitu kedua daftar itu diisi. */
+    {
+        nama: "Fish an Anime RNG",
+        ket: "1 place · standalone build, not served by the loader yet",
+        status: "beta",
+        fitur: [
+            "Fast restart — recasts the instant a catch completes",
+            "Reject unwanted rolls",
+            "Auto claim rewards and daily login",
+            "Auto gem event",
+            "Auto feed and level characters",
+            "Pond suggestion and auto move",
+            "FPS boost with map slimming",
+            "Anti AFK",
+        ],
+    },
+];
+
+(function bangunDukungan() {
+    const LABEL = { online: "Online", beta: "Beta", update: "Updating", off: "Offline" };
+    const rak = document.getElementById("rak-game");
+
+    for (const g of GAME_DIDUKUNG) {
+        const kartu = document.createElement("div");
+        kartu.className = "game kaca";
+
+        const judul = document.createElement("h4");
+        judul.textContent = g.nama;
+        if (g.ket) {
+            const kecil = document.createElement("small");
+            kecil.textContent = g.ket;
+            judul.appendChild(kecil);
+        }
+        kartu.appendChild(judul);
+
+        const st = document.createElement("div");
+        st.className = "status " + g.status;
+        const titik = document.createElement("span");
+        titik.className = "titik";
+        st.appendChild(titik);
+        st.appendChild(document.createTextNode("Status : "));
+        const label = document.createElement("b");
+        label.textContent = LABEL[g.status] || g.status;
+        st.appendChild(label);
+        kartu.appendChild(st);
+
+        const ul = document.createElement("ul");
+        ul.className = "fitur";
+        for (const f of g.fitur) {
+            const li = document.createElement("li");
+            li.textContent = f;
+            ul.appendChild(li);
+        }
+        kartu.appendChild(ul);
+
+        rak.appendChild(kartu);
+    }
+
+    document.getElementById("dukungan-jml").textContent =
+        GAME_DIDUKUNG.length + (GAME_DIDUKUNG.length === 1 ? " game" : " games");
+
+    /* Lebar satu langkah dibaca dari kartu pertama, bukan angka tetap: kalau
+       lebar .game diubah di CSS, tombol panah ikut menyesuaikan sendiri. */
+    window.geserRak = (arah) => {
+        const kartu = rak.querySelector(".game");
+        const langkah = kartu ? kartu.offsetWidth + 14 : 284;
+        /* scrollBy dengan objek opsi baru ada di Chrome 61 / Safari 14. WebView
+           Android lawas tidak punya, dan di sana tombol panah akan diam total
+           tanpa satu pun pesan galat -- jadi ada jalur cadangan. */
+        if (typeof rak.scrollBy === "function") {
+            rak.scrollBy({ left: arah * langkah, behavior: "smooth" });
+        } else {
+            rak.scrollLeft += arah * langkah;
+        }
+    };
+
+    /* Seret dengan tetikus. Di HP sentuhan sudah menggeser sendiri, tapi di
+       desktop tanpa ini satu-satunya cara menggeser adalah scrollbar tipis di
+       bawah rak -- dan itu praktis tidak pernah ketemu. */
+    let seret = false, mulaiX = 0, mulaiScroll = 0;
+    rak.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "touch") return;   // sentuhan biarkan ke browser
+        seret = true;
+        mulaiX = e.clientX;
+        mulaiScroll = rak.scrollLeft;
+        rak.classList.add("seret");
+    });
+    rak.addEventListener("pointermove", (e) => {
+        if (!seret) return;
+        rak.scrollLeft = mulaiScroll - (e.clientX - mulaiX);
+    });
+    for (const ev of ["pointerup", "pointerleave", "pointercancel"]) {
+        rak.addEventListener(ev, () => {
+            seret = false;
+            rak.classList.remove("seret");
+        });
+    }
+
+    /* Panah disembunyikan kalau semua kartu sudah muat -- tombol geser yang
+       tidak menggeser apa pun bikin orang mengira halamannya rusak. */
+    const aturPanah = () => {
+        const perlu = rak.scrollWidth > rak.clientWidth + 4;
+        document.getElementById("dukungan-panah").style.display = perlu ? "" : "none";
+        rak.style.cursor = perlu ? "grab" : "";
+    };
+    aturPanah();
+    window.addEventListener("resize", aturPanah);
+})();
 
 /* ---- MULAI ---- */
 bangunForm("w1");
