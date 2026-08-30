@@ -1788,13 +1788,13 @@ window.jalankanPrintPS = async function () {
                       h.duplikat.filter(n => n !== i + 1).join(", #") + "</span>"
                     : "";
                 const teman = h.teman === "gagal" ? " (izin teman gagal)" : "";
-                /* Format lama ikut ditampilkan, dan keterangan mentah dari
-                   Roblox ikut dicetak. Sedang menelusuri kasus "link jadi tapi
-                   dibuka malah Invalid" -- tanpa keterangan ini, dua sebab yang
-                   sangat berbeda terlihat sama persis dari layar. */
-                const cadangan = h.link_lama
-                    ? '<div class="ps-item" style="opacity:.75">&nbsp;&nbsp;format lama: '
-                      + h.link_lama + "</div>" : "";
+                /* Link utama memakai format /games/{placeId}?privateServerLinkCode=
+                   karena HANYA format itu yang bisa memilih place. Yang /share
+                   ikut ditampilkan sebagai cadangan: ia selalu mendarat di root
+                   place, jadi berguna cuma kalau format lama bermasalah. */
+                const cadangan = h.link_share
+                    ? '<div class="ps-item" style="opacity:.7">&nbsp;&nbsp;cadangan (ke lobi utama): '
+                      + h.link_share + "</div>" : "";
                 const jejak = (h.aktif || h.kataRoblox)
                     ? '<div class="ps-item" style="opacity:.6;font-size:11px">'
                       + "&nbsp;&nbsp;aktif=" + (h.aktif || "?")
