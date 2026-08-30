@@ -374,6 +374,67 @@ input:focus, select:focus {
 .saklar.on .rel { background: linear-gradient(120deg, var(--ember), var(--ember-hot)); }
 .saklar.on .rel::after { transform: translateX(17px); background: #fff; }
 
+/* ---- MISCELLANEOUS ---- */
+.ps-label { display: block; font-size: 12px; color: var(--ink-dim); margin: 12px 0 5px; }
+#v-misc textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 11px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--glass-line);
+    background: rgba(0, 0, 0, 0.34);
+    color: var(--ink);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px;
+    resize: vertical;
+}
+#v-misc textarea:focus {
+    outline: none;
+    border-color: var(--gold-soft);
+    box-shadow: 0 0 0 3px rgba(232, 180, 74, 0.10);
+}
+#ps-keluar { color: #a7f3d0; border-color: rgba(167, 243, 208, 0.3); }
+.ps-baris { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.ps-baris input { width: auto; }
+.ps-item { font-size: 12px; line-height: 1.5; word-break: break-all; padding: 2px 0; }
+.ps-ok { color: #86efac; }
+.ps-gagal { color: #fca5a5; }
+.ps-kembar { color: var(--ember-hot); font-weight: 600; }
+
+/* Kartu "Soon": sengaja TIDAK bisa diklik. Kartu mati yang tetap menerima klik
+   terbaca sebagai fitur rusak, bukan fitur yang belum ada. */
+.misc-soon {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+.misc-kartu {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    opacity: 0.55;
+    cursor: not-allowed;
+    user-select: none;
+}
+.misc-kartu .ikon { font-size: 26px; flex: 0 0 auto; }
+.misc-kartu h3 { margin: 0 0 3px; font-size: 14px; }
+.misc-kartu p { margin: 0; font-size: 11.5px; color: var(--ink-dim); line-height: 1.45; }
+.lencana {
+    margin-left: auto;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    color: var(--gold);
+    border: 1px solid var(--gold-soft);
+    background: rgba(232, 180, 74, 0.08);
+}
+
 /* ---- GAME YANG DIDUKUNG ----
    Digeser mendatar, BUKAN ditumpuk ke bawah: daftarnya akan terus bertambah dan
    menu ini harus tetap muat satu layar. scroll-snap supaya berhentinya rapi di
@@ -661,6 +722,12 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                    ditanam langsung di script dan <b>menang atas panel</b> — sekali
                    dipakai, config dari panel tidak lagi menimpanya.</p>
             </div>
+            <div class="kartu kaca" onclick="keTampilan('misc')">
+                <div class="ikon">&#129513;</div>
+                <h2>Miscellaneous</h2>
+                <p>Alat bantu web di luar script: print private server, solver,
+                   dan shop. Sebagian masih dalam pengerjaan.</p>
+            </div>
         </div>
 
         <!-- Kartunya dibangun dari GAME_DIDUKUNG di script bawah, bukan ditulis
@@ -746,6 +813,85 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 <code>MuzeFallHarvestConfig</code> — keduanya selalu ikut
                 dipancarkan, jadi akun yang berpindah dunia tetap terbawa
                 setelannya.
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ MISCELLANEOUS ============ -->
+    <section id="v-misc" class="tampilan">
+        <div class="bar-atas">
+            <button class="btn" onclick="keTampilan('menu')">&#8592; Menu</button>
+        </div>
+
+
+        <!-- PRINT PS.
+             Logikanya TIDAK di halaman ini melainkan di Cloudflare Worker
+             (worker_printps.js). Bukan pilihan gaya: browser tidak bisa
+             mengerjakannya sama sekali -- API Roblox tidak mengirim header CORS
+             (terukur: preflight ke endpoint pembuat VIP server balas 401 tanpa
+             CORS), dan `Cookie` itu forbidden header name yang tidak bisa
+             disetel dari JavaScript. Worker bukan browser, jadi kedua batasan
+             itu tidak berlaku padanya. -->
+        <div class="kaca keluaran">
+            <h2 style="margin:0 0 4px">&#128424; Print Private Server</h2>
+            <div class="catatan" style="margin-top:0">
+                Untuk tiap cookie: ambil CSRF &rarr; buat private server di place-nya
+                &rarr; keluarkan link <code>?privateServerLinkCode=…</code>, yang dipakai
+                tools rejoiner. Cookie dikirim ke Worker, dipakai sekali, lalu ikut
+                hilang — tidak ditulis ke penyimpanan mana pun.
+            </div>
+
+            <div id="ps-belumsetel" class="catatan"
+                 style="border-color:rgba(232,180,74,.4); color:var(--gold); display:none">
+                <b>URL Worker belum disetel.</b> Deploy <code>worker_printps.js</code>
+                ke Cloudflare Workers, lalu isi <code>URL_WORKER</code> di dalam
+                berkas ini satu kali sebelum diunggah.
+            </div>
+
+            <div id="ps-alat">
+                <label class="ps-label">Key</label>
+                <input type="text" id="ps-key" spellcheck="false" autocomplete="off"
+                       placeholder="key yang terdaftar di Worker">
+                <div id="ps-keystat" style="font-size:11px; color:var(--ink-faint); margin-top:5px"></div>
+
+                <label class="ps-label">Satu <code>cookie:placeId</code> per baris</label>
+                <textarea id="ps-input" rows="6" spellcheck="false"
+                          placeholder="_|WARNING:-DO-NOT-SHARE...:129343810645058"></textarea>
+
+                <div class="ps-baris">
+                    <label class="ps-label" style="margin:0">Default Place ID</label>
+                    <input type="text" id="ps-place" value="129343810645058" style="width:160px">
+                    <button class="btn utama" id="ps-btn" onclick="jalankanPrintPS()"
+                            style="margin-left:auto">&#128424; Print Link PS</button>
+                </div>
+
+                <div id="ps-hasil" style="margin-top:12px"></div>
+
+                <div id="ps-keluar-box" style="display:none; margin-top:10px">
+                    <label class="ps-label">Link PS — urut sama seperti cookie yang kamu tempel:</label>
+                    <textarea id="ps-keluar" rows="4" readonly></textarea>
+                    <button class="btn" style="margin-top:6px"
+                            onclick="salin('ps-keluar', this)">Salin</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="misc-soon">
+            <div class="kaca misc-kartu">
+                <div class="ikon">&#129518;</div>
+                <div>
+                    <h3>Solver</h3>
+                    <p>Penyelesai captcha untuk akun yang tersangkut saat login.</p>
+                </div>
+                <span class="lencana">Soon</span>
+            </div>
+            <div class="kaca misc-kartu">
+                <div class="ikon">&#128722;</div>
+                <div>
+                    <h3>Shop</h3>
+                    <p>Beli dan perpanjang langganan tanpa lewat Discord.</p>
+                </div>
+                <span class="lencana">Soon</span>
             </div>
         </div>
     </section>
@@ -1304,6 +1450,7 @@ const SUB = {
     menu:   "Pilih yang mau kamu buat",
     loader: "Satu baris, benar untuk semua dunia",
     gen:    "Setelan ditanam langsung di script",
+    misc:   "Alat bantu di luar script",
 };
 function keTampilan(nama) {
     for (const el of document.querySelectorAll(".tampilan")) el.classList.remove("aktif");
@@ -1543,6 +1690,127 @@ const GAME_DIDUKUNG = [
     aturPanah();
     window.addEventListener("resize", aturPanah);
 })();
+
+/* =========================================================================
+   PRINT PS — memanggil Cloudflare Worker
+
+   ISI INI SEKALI sebelum halaman diunggah, dengan URL Worker milikmu:
+       https://<nama>.<akun>.workers.dev
+   Dibiarkan kosong, formulirnya dikunci dengan penjelasan -- bukan dibiarkan
+   menembak lalu gagal tanpa sebab.
+
+   Key di bawah dicocokkan dengan secret KEY_DIIZINKAN di Worker. Worker MENOLAK
+   SEMUA kalau secret itu belum diisi, jadi lupa mengaturnya tidak pernah
+   berarti "terbuka untuk umum".
+   ========================================================================= */
+const URL_WORKER = "https://printps.fengjiu1122.workers.dev";
+
+const KUNCI_PS_SIMPAN = "mozeframePrintKey";
+
+function ambilKeyPS() {
+    const el = document.getElementById("ps-key");
+    return el ? String(el.value || "").trim() : "";
+}
+
+(function siapkanPrintPS() {
+    const el = document.getElementById("ps-key");
+    if (!el) return;
+    try { el.value = localStorage.getItem(KUNCI_PS_SIMPAN) || ""; } catch (e) {}
+    el.oninput = () => {
+        const stat = document.getElementById("ps-keystat");
+        const k = ambilKeyPS();
+        stat.style.color = k ? "#86efac" : "var(--ink-faint)";
+        stat.textContent = k ? "Tersimpan di browser ini." : "Belum diisi.";
+        try { localStorage.setItem(KUNCI_PS_SIMPAN, k); } catch (e) {}
+    };
+    el.oninput();
+
+    if (!URL_WORKER) {
+        document.getElementById("ps-belumsetel").style.display = "";
+        document.getElementById("ps-alat").style.display = "none";
+    }
+})();
+
+window.jalankanPrintPS = async function () {
+    const hasilEl = document.getElementById("ps-hasil");
+    const kotakKeluar = document.getElementById("ps-keluar-box");
+    const keluarEl = document.getElementById("ps-keluar");
+    const tombol = document.getElementById("ps-btn");
+    const gagal = (t) => { hasilEl.innerHTML = '<div class="ps-item ps-gagal">' + t + "</div>"; };
+
+    const kunci = ambilKeyPS();
+    if (!kunci) return gagal("Isi Key dulu.");
+
+    const teks = (document.getElementById("ps-input").value || "").trim();
+    const placeBawaan = (document.getElementById("ps-place").value || "").trim();
+    if (!teks) return gagal("Tempel cookie:placeId dulu.");
+
+    /* Cookie Roblox mengandung ':' sendiri, jadi yang boleh dianggap placeId
+       hanya potongan TERAKHIR dan hanya kalau ia angka. */
+    const items = [];
+    for (const baris of teks.split(/\r?\n/)) {
+        const b = baris.trim();
+        if (!b) continue;
+        let cookie = b, place = placeBawaan;
+        const m = b.match(/^(.*?)[:\s]+(\d{6,})\s*$/);
+        if (m) { cookie = m[1].trim(); place = m[2]; }
+        if (cookie) items.push({ cookie, place_id: parseInt(place) || 0 });
+    }
+    if (!items.length) return gagal("Tidak ada cookie terbaca.");
+
+    tombol.disabled = true;
+    hasilEl.innerHTML = '<div class="ps-item">Memproses ' + items.length +
+        " cookie... (bisa sampai 2 menit per cookie)</div>";
+    kotakKeluar.style.display = "none";
+
+    try {
+        const res = await fetch(URL_WORKER, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ panel_key: kunci, items })
+        });
+
+        /* Status DIPERIKSA sebelum isinya dipercaya. Balasan galat pun ber-JSON,
+           jadi tanpa cek ini halaman bisa merender "0/1 berhasil" tanpa satu
+           baris pun -- gagal yang terlihat seperti sukses kosong. */
+        const d = await res.json().catch(() => null);
+        if (!res.ok) return gagal((d && d.error) ? d.error : "HTTP " + res.status);
+        if (!d) return gagal("Balasan Worker tidak terbaca.");
+        if (d.error) return gagal(d.error);
+
+        const baris = [], link = [];
+        (d.hasil || []).forEach((h, i) => {
+            if (h && h.ok && h.link) {
+                /* Link kembar = cookie tertukar: dua akun mendarat di server yang
+                   sama, kebalikan dari tujuan fitur ini. Ditandai mencolok. */
+                const kembar = (h.duplikat && h.duplikat.length > 1)
+                    ? ' <span class="ps-kembar">— sama dgn #' +
+                      h.duplikat.filter(n => n !== i + 1).join(", #") + "</span>"
+                    : "";
+                const teman = h.teman === "gagal" ? " (izin teman gagal)" : "";
+                baris.push('<div class="ps-item ps-ok">OK #' + (i + 1) + " — " +
+                    h.link + teman + kembar + "</div>");
+                link.push(h.link);
+            } else {
+                baris.push('<div class="ps-item ps-gagal">GAGAL #' + (i + 1) + " — " +
+                    (h ? (h.error || "gagal") : "gagal") + "</div>");
+            }
+        });
+        const warn = d.peringatan
+            ? '<div class="ps-item ps-kembar">' + d.peringatan + "</div>" : "";
+        hasilEl.innerHTML = warn + '<div class="ps-item">' + (d.sukses || 0) + "/" +
+            (d.total || items.length) + " berhasil</div>" + baris.join("");
+        if (link.length) {
+            keluarEl.value = link.join("\n");
+            kotakKeluar.style.display = "";
+        }
+    } catch (e) {
+        gagal(e.message + " — Worker tidak terjangkau, atau origin halaman ini "
+            + "belum terdaftar di ASAL_DIIZINKAN.");
+    } finally {
+        tombol.disabled = false;
+    }
+};
 
 /* ---- MULAI ---- */
 bangunForm("w1");
