@@ -20,33 +20,94 @@
 <link rel="icon" type="image/png" sizes="32x32" href="ikon_generator/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="ikon_generator/icon-192.png">
 <link rel="apple-touch-icon" href="ikon_generator/apple-touch-icon.png">
+
+
+<!-- TIPOGRAFI. Archivo untuk kalimat dan judul, JetBrains Mono untuk DATA
+     (key, kode, angka, status). Pemisahannya tegas dan disengaja: begitu
+     satu font memikul keduanya, angka dan kalimat jadi sama beratnya.
+     Keduanya punya cadangan sistem, jadi kalau Google Fonts tidak
+     terjangkau halamannya tetap terbaca, cuma kehilangan wataknya.
+     display=swap supaya teks muncul lebih dulu dengan font cadangan,
+     bukan layar kosong di HP bersinyal jelek. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
 /* =========================================================================
-   TEMA — diambil dari SISTEM DESAIN v2 di panel lama, bukan dikarang ulang.
-   Token yang sama: ember/gold/glass, supaya halaman ini terasa satu keluarga
-   dengan panel yang sudah dipakai buyer.
+   MOZEFRAME — GAYA APP SHELL
+   =========================================================================
+
+   RIWAYAT, supaya tidak diulang. Halaman ini sudah tiga kali ganti gaya:
+
+     v1  kaca      — `backdrop-filter: blur()`, judul gradien ber-shimmer, glow
+                     radial merah, semua rata tengah, sudut membulat.
+     v2  poster    — blok rata, bayangan padat `6px 6px 0 #000`. GAGAL, dan
+                     sebabnya teknis: bayangan hitam di atas latar yang hampir
+                     hitam tidak terbaca sebagai bayangan, cuma tampak meleset.
+     v3  spec-sheet— nol bayangan, garis rambut, monospace. Bekerja, tapi kering.
+
+   v4 mengambil bentuk dari acuan yang diberikan: bukan halaman jualan
+   satu-kolom, tapi APLIKASI. Bedanya struktural, bukan hiasan:
+
+     1. SIDEBAR TETAP 260px berisi navigasi. Empat tampilan yang selama ini
+        diganti lewat tombol "kembali ke menu" sekarang selalu terlihat
+        sekaligus. Halaman berhenti terasa seperti brosur.
+     2. ABU NETRAL, bukan hitam kecokelatan. #191919 / #1e1e1e / #2a2a2a --
+        tiga langkah yang jaraknya rapat. Latar TIDAK berwarna sama sekali;
+        warna cuma muncul di aksen kecil.
+     3. RADIUS 8px, bayangan lembut TIPIS (`0 1px 2px`). Ini bukan kembalinya
+        v1: yang membuat v1 generik bukan sudut membulatnya, tapi gabungan
+        blur + gradien teks + glow radial + tata letak brosur. Sudut membulat
+        yang tenang di atas abu netral terbaca sebagai perkakas.
+     4. MONOSPACE untuk DATA (key, kode, angka, status), Archivo untuk kalimat
+        dan judul. Pemisahan yang tegas, bukan satu font untuk semuanya.
+     5. PADAT. Label 11-12px, isi 13px. Aplikasi menampung banyak; brosur tidak.
+
+   YANG SENGAJA TIDAK DIAMBIL dari acuan: paletnya. Acuan memakai blurple
+   Discord (#5865f2) dan cyan (#00e5ff). Memakai itu di sini membuat halaman
+   terbaca sebagai tiruan layanan sebelah. Aksennya tetap emas Mozeframe.
+
+   Seluruh nama kelas dan id lama DIPERTAHANKAN -- JS memegang `aktif`,
+   `tampil`, `kosong`, `on`, `seret`, `baik`, `buruk`, dan belasan id.
    ========================================================================= */
+
 :root {
-    --ember-deep: #7f1d1d;
-    --ember:      #b91c1c;
-    --ember-hot:  #f43f5e;
-    --gold:       #e8b44a;
-    --gold-soft:  rgba(232, 180, 74, 0.28);
+    --bg:        #191919;
+    --surface:   #1e1e1e;
+    --surface-2: #252525;
+    --surface-3: #2b2b2b;
+    --sunk:      #141414;
+    --sidebar:   #111111;
 
-    --ink:        #f1f5f9;
-    --ink-dim:    #94a3b8;
-    --ink-faint:  #64748b;
+    --line:      #2a2a2a;
+    --line-2:    #383838;
+    --line-3:    #484848;
 
-    --glass-line: rgba(255, 255, 255, 0.10);
-    --glass-bg:   linear-gradient(160deg, rgba(24, 24, 32, 0.82), rgba(14, 14, 20, 0.88));
-    --gloss:      inset 0 1px 0 rgba(255, 255, 255, 0.14);
-    --lift:       0 18px 40px -22px rgba(0, 0, 0, 0.9);
+    --text:      #ffffff;
+    --text-2:    #a0a0a0;
+    --text-3:    #6b6b6b;
 
-    --fj-opacity: 0.42;
+    --gold:      #e8b44a;
+    --gold-2:    #f3c96e;
+    --gold-dim:  rgba(232, 180, 74, 0.12);
+    --ok:        #3ba55c;
+    --warn:      #faa61a;
+    --danger:    #ed4245;
+    --info:      #5a9fd4;
 
-    --r-sm: 8px;
-    --r-md: 12px;
-    --r-lg: 18px;
+    --r-sm: 6px;
+    --r:    8px;
+    --r-lg: 12px;
+
+    /* Bayangan sengaja NYARIS tidak ada. Di latar segelap ini, bayangan besar
+       cuma jadi noda kotor; yang dibutuhkan sekadar pemisah tepi. */
+    --sh-1: 0 1px 2px rgba(0, 0, 0, 0.30);
+    --sh-2: 0 4px 12px rgba(0, 0, 0, 0.38);
+
+    --lebar-sisi: 258px;
+
+    --font-ui:   "Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -54,16 +115,20 @@
 html, body {
     margin: 0;
     min-height: 100%;
-    background: #08080c;
-    color: var(--ink);
-    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 14px;
     overflow-x: hidden;
 }
 
 /* ---- LATAR FENGJIU ----
    Dua <img> bergantian. Kalau cuma satu elemen lalu src-nya diganti, gambar
-   sempat KOSONG di tengah transisi -- kedip putih yang jelas terlihat di layar
-   gelap. Ini persis pola yang sudah dipakai di panel lama. */
+   sempat KOSONG di tengah transisi -- kedip yang jelas terlihat di layar gelap.
+
+   Ken-burns dibuang dan opasitasnya sangat rendah. Di gaya aplikasi, latar
+   bergambar itu bahaya: begitu ia cukup terang untuk dikenali sebagai foto,
+   teks 11px di atasnya langsung sulit dibaca. Di sini ia cuma tekstur. */
 #fj {
     position: fixed;
     inset: 0;
@@ -78,361 +143,475 @@ html, body {
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transform: scale(1.06);
-    transition: opacity 1.6s ease, transform 9s linear;
+    filter: grayscale(1) contrast(1.1) brightness(0.55);
+    transition: opacity 1.2s linear;
 }
-#fj img.tampil {
-    opacity: var(--fj-opacity);
-    transform: scale(1.12);
-}
+#fj img.tampil { opacity: 0.07; }
+
+/* Glow radial diganti wash rata. Tidak ada satu pun gradien berwarna. */
 #scrim {
     position: fixed;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background:
-        radial-gradient(1100px 620px at 50% 8%, rgba(185, 28, 28, 0.22), transparent 68%),
-        linear-gradient(180deg, rgba(6, 6, 10, 0.62), rgba(6, 6, 10, 0.90));
+    background: linear-gradient(180deg, rgba(25, 25, 25, 0.82), rgba(25, 25, 25, 0.95));
 }
 
-/* ---- KERANGKA ---- */
+/* =========================================================================
+   SIDEBAR
+   ========================================================================= */
+.sisi {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 30;
+    width: var(--lebar-sisi);
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar);
+    border-right: 1px solid var(--line);
+    padding: 18px 12px 14px;
+}
+.sisi-merek {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px 18px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+}
+.sisi-logo {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-sm);
+    background: var(--gold);
+    color: #16120a;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+}
+.sisi-nama {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.sisi-nama small {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--text-3);
+}
+.sisi-judul {
+    padding: 14px 10px 7px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-3);
+}
+.sisi-nav { display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.nav-item .ikon { font-size: 14px; width: 18px; text-align: center; opacity: 0.9; }
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+/* Yang aktif ditandai latar + garis emas di kiri. Dua penanda, bukan satu:
+   di HP dengan layar redup, perbedaan latar 1 langkah saja sering tidak
+   kelihatan sama sekali. */
+.nav-item.aktif {
+    background: var(--surface-2);
+    color: var(--text);
+    box-shadow: inset 2px 0 0 var(--gold);
+}
+.sisi-kaki {
+    margin-top: auto;
+    padding: 12px 10px 0;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.7;
+    color: var(--text-3);
+}
+.sisi-kaki a { color: var(--text-2); text-decoration: none; }
+.sisi-kaki a:hover { color: var(--gold); }
+
+/* ---- ISI ---- */
+/* Isi DITENGAHKAN di ruang sisa kanan sidebar, bukan ditempelkan tepat di
+   sebelahnya. Caranya lewat padding di <body>, bukan margin di .wrap: sidebar
+   dan latar sama-sama `position: fixed`, jadi keduanya tidak ikut tergeser --
+   sementara `margin-left` tetap membuat isi menempel kiri dan menyisakan
+   ruang kosong menganga di kanan pada layar lebar. */
+body { padding-left: var(--lebar-sisi); }
+
 .wrap {
     position: relative;
     z-index: 2;
-    max-width: 1080px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 28px 20px 72px;
+    padding: 26px 30px 90px;
 }
 
+/* Kepala halaman. Wordmark sudah dipegang sidebar, jadi <h1> di sini turun
+   pangkat jadi eyebrow kecil dan `#merek-sub` -- yang isinya diganti JS tiap
+   pindah tampilan -- naik jadi judul halaman. */
 .merek {
-    text-align: center;
-    margin: 26px 0 6px;
+    text-align: left;
+    margin: 0 0 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
 }
 .merek h1 {
-    margin: 0;
-    font-size: clamp(30px, 6vw, 46px);
-    font-weight: 800;
-    letter-spacing: 0.16em;
-    background: linear-gradient(100deg, var(--gold) 0%, #fff6df 42%, var(--ember-hot) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: kilau 7s ease-in-out infinite;
-    background-size: 220% 100%;
-}
-@keyframes kilau {
-    0%, 100% { background-position: 0% 50%; }
-    50%      { background-position: 100% 50%; }
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
 }
 .merek p {
-    margin: 8px 0 0;
-    color: var(--ink-dim);
-    font-size: 13px;
-    letter-spacing: 0.05em;
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
 }
 
-/* ---- KACA ---- */
+/* ---- PANEL ----
+   Nama kelasnya masih `.kaca` karena JS dan markup memakainya. Isinya sudah
+   bukan kaca: permukaan rata, garis 1px, bayangan tipis. */
 .kaca {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-line);
-    border-radius: var(--r-lg);
-    box-shadow: var(--gloss), var(--lift);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: var(--sh-1);
 }
 
-/* ---- TAMPILAN & PERGANTIANNYA ---- */
+/* ---- PERGANTIAN TAMPILAN ---- */
 .tampilan { display: none; }
 .tampilan.aktif {
     display: block;
-    animation: masuk 0.42s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+    animation: masuk 0.16s ease both;
 }
 @keyframes masuk {
-    from { opacity: 0; transform: translateY(14px) scale(0.985); }
+    from { opacity: 0; transform: translateY(4px); }
     to   { opacity: 1; transform: none; }
 }
 
 /* ---- MENU ---- */
 .menu {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 14px;
+    margin-top: 6px;
 }
 .kartu {
-    position: relative;
-    padding: 30px 26px 26px;
+    padding: 18px;
     cursor: pointer;
-    overflow: hidden;
-    transition: transform 0.32s cubic-bezier(0.22, 0.9, 0.3, 1), border-color 0.32s;
-    animation: naik 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
-.kartu:nth-child(2) { animation-delay: 0.09s; }
-@keyframes naik {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: none; }
-}
-.kartu:hover {
-    transform: translateY(-6px);
-    border-color: var(--gold-soft);
-}
-.kartu::after {
-    content: "";
-    position: absolute;
-    inset: -40% -60%;
-    background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.13) 50%, transparent 58%);
-    transform: translateX(-100%);
-    transition: transform 0.8s ease;
-}
-.kartu:hover::after { transform: translateX(100%); }
+/* Hover mengubah LATAR saja. Kartu yang terangkat dan berbayang besar itu
+   bahasa halaman jualan; di aplikasi ia bikin daftar terasa goyah. */
+.kartu:hover { background: var(--surface-2); border-color: var(--line-2); }
+.kartu::after { content: none; }
 .kartu .ikon {
-    font-size: 30px;
-    margin-bottom: 14px;
-    filter: drop-shadow(0 0 14px var(--gold-soft));
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 12px;
+    border-radius: var(--r-sm);
+    background: var(--gold-dim);
+    font-size: 16px;
+    line-height: 1;
+    filter: none;
 }
 .kartu h2 {
-    margin: 0 0 8px;
-    font-size: 19px;
-    letter-spacing: 0.03em;
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--text);
 }
 .kartu p {
     margin: 0;
-    color: var(--ink-dim);
-    font-size: 13px;
-    line-height: 1.65;
+    color: var(--text-2);
+    font-size: 12.5px;
+    line-height: 1.6;
 }
 
 /* ---- TOMBOL ---- */
 .btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border: 1px solid var(--glass-line);
-    border-radius: var(--r-md);
-    background: rgba(255, 255, 255, 0.045);
-    color: var(--ink);
-    font: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.22s, border-color 0.22s, transform 0.12s;
-}
-.btn:hover { background: rgba(255, 255, 255, 0.09); border-color: var(--gold-soft); }
-.btn:active { transform: translateY(1px); }
-.btn.utama {
-    background: linear-gradient(120deg, var(--ember-deep), var(--ember));
-    border-color: rgba(244, 63, 94, 0.42);
+    gap: 7px;
+    padding: 8px 14px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-family: var(--font-ui);
+    font-size: 12.5px;
     font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.btn.utama:hover { background: linear-gradient(120deg, var(--ember), var(--ember-hot)); }
+.btn:hover { background: var(--surface-3); border-color: var(--line-3); color: var(--text); }
+.btn:active { background: var(--surface); }
+.btn.utama {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #16120a;
+}
+.btn.utama:hover { background: var(--gold-2); border-color: var(--gold-2); color: #16120a; }
 
 .bar-atas {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin: 22px 0 18px;
+    margin: 0 0 16px;
 }
 
 /* ---- BARIS KEY ---- */
 #keybar {
     display: none;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    padding: 14px 18px;
-    margin-top: 20px;
-    border-radius: var(--r-lg);
-    transition: border-color 0.3s;
+    padding: 13px 15px;
+    margin: 0 0 18px;
 }
 #keybar.tampil { display: flex; }
-#keybar.kosong { border-color: rgba(244, 63, 94, 0.55); }
+#keybar.kosong { border-color: var(--danger); }
 #keybar label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--text-3);
     white-space: nowrap;
 }
 #keybar input {
-    flex: 1 1 260px;
-    font-family: ui-monospace, Consolas, monospace;
-    letter-spacing: 0.04em;
+    flex: 1 1 240px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 #keystat {
-    font-size: 11.5px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     flex: 1 1 100%;
-    line-height: 1.6;
-    color: var(--ink-faint);
+    line-height: 1.65;
+    color: var(--text-3);
 }
-#keystat.buruk { color: #fca5a5; }
-#keystat.baik { color: #86efac; }
+#keystat.buruk { color: var(--danger); }
+#keystat.baik  { color: var(--ok); }
 
-/* ---- TAB ---- */
-.tabs { display: flex; gap: 8px; }
+/* ---- TAB ----
+   Segmented control: satu kotak, isinya dua pilihan. Bentuk ini dipakai karena
+   dua tab ini SALING MENGGANTIKAN (World 1 / World 2) -- kotak bersama
+   menyatakan itu, dua tombol terpisah tidak. */
+.tabs {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--sunk);
+}
 .tab {
-    padding: 9px 20px;
-    border-radius: var(--r-md);
-    border: 1px solid var(--glass-line);
-    background: rgba(255, 255, 255, 0.035);
-    color: var(--ink-dim);
-    font-size: 13px;
+    padding: 7px 16px;
+    border: 0;
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text-3);
+    font-family: var(--font-ui);
+    font-size: 12.5px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.24s;
+    transition: background 0.15s ease, color 0.15s ease;
 }
-.tab:hover { color: var(--ink); }
-.tab.aktif {
-    color: #1a1206;
-    background: linear-gradient(120deg, var(--gold), #f5d488);
-    border-color: transparent;
-    box-shadow: 0 6px 20px -8px var(--gold);
-}
+.tab:hover { color: var(--text-2); }
+.tab.aktif { background: var(--surface-2); color: var(--text); box-shadow: var(--sh-1); }
 
 /* ---- FORM ---- */
-.bagian { padding: 22px; margin-bottom: 18px; }
+.bagian { padding: 18px; margin-bottom: 14px; }
 .bagian > h3 {
     margin: 0 0 4px;
-    font-size: 12px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--text);
 }
 .bagian > .ket {
-    margin: 0 0 18px;
+    margin: 0 0 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
     font-size: 12px;
-    color: var(--ink-faint);
-    line-height: 1.6;
+    color: var(--text-3);
+    line-height: 1.65;
+    max-width: 66ch;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 13px;
 }
-.medan { display: flex; flex-direction: column; gap: 6px; }
+.medan { display: flex; flex-direction: column; gap: 5px; }
 .medan > label {
-    font-size: 12px;
-    color: var(--ink-dim);
+    font-size: 11.5px;
+    color: var(--text-2);
     font-weight: 600;
 }
 .medan .kunci {
-    font-size: 10px;
-    color: var(--ink-faint);
-    font-family: ui-monospace, Consolas, monospace;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--text-3);
 }
 input[type="text"], input[type="number"], select {
     width: 100%;
-    padding: 9px 11px;
+    padding: 8px 10px;
     border-radius: var(--r-sm);
-    border: 1px solid var(--glass-line);
-    background: rgba(0, 0, 0, 0.34);
-    color: var(--ink);
-    font: inherit;
-    font-size: 13px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--line-2);
+    background: var(--sunk);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    transition: border-color 0.15s ease;
 }
-input:focus, select:focus {
-    outline: none;
-    border-color: var(--gold-soft);
-    box-shadow: 0 0 0 3px rgba(232, 180, 74, 0.10);
-}
+input:focus, select:focus { outline: none; border-color: var(--gold); }
 
-/* saklar */
+/* ---- SAKLAR ---- */
 .saklar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 9px 12px;
+    padding: 9px 11px;
     border-radius: var(--r-sm);
-    border: 1px solid var(--glass-line);
-    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid var(--line);
+    background: var(--sunk);
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.15s ease, background 0.15s ease;
 }
-.saklar:hover { border-color: var(--gold-soft); }
-.saklar span { font-size: 12.5px; }
+.saklar:hover { border-color: var(--line-2); background: var(--surface); }
+.saklar span { font-size: 12.5px; color: var(--text-2); }
+.saklar.on span { color: var(--text); }
 .rel {
     position: relative;
-    flex: 0 0 38px;
-    height: 21px;
+    flex: 0 0 34px;
+    height: 19px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.13);
-    transition: background 0.26s;
+    background: var(--line-3);
+    transition: background 0.18s ease;
 }
 .rel::after {
     content: "";
     position: absolute;
     top: 3px; left: 3px;
-    width: 15px; height: 15px;
+    width: 13px; height: 13px;
     border-radius: 50%;
-    background: #cbd5e1;
-    transition: transform 0.26s cubic-bezier(0.4, 1.6, 0.5, 1), background 0.26s;
+    background: #d8d8d8;
+    transition: transform 0.18s ease, background 0.18s ease;
 }
-.saklar.on .rel { background: linear-gradient(120deg, var(--ember), var(--ember-hot)); }
-.saklar.on .rel::after { transform: translateX(17px); background: #fff; }
+.saklar.on .rel { background: var(--gold); }
+.saklar.on .rel::after { transform: translateX(15px); background: #16120a; }
 
 /* ---- MISCELLANEOUS ---- */
-.ps-label { display: block; font-size: 12px; color: var(--ink-dim); margin: 12px 0 5px; }
+.ps-label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    margin: 14px 0 6px;
+}
 #v-misc textarea {
     width: 100%;
     box-sizing: border-box;
-    padding: 9px 11px;
+    padding: 9px 10px;
     border-radius: var(--r-sm);
-    border: 1px solid var(--glass-line);
-    background: rgba(0, 0, 0, 0.34);
-    color: var(--ink);
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    border: 1px solid var(--line-2);
+    background: var(--sunk);
+    color: var(--text);
+    font-family: var(--font-mono);
     font-size: 12px;
     resize: vertical;
 }
-#v-misc textarea:focus {
-    outline: none;
-    border-color: var(--gold-soft);
-    box-shadow: 0 0 0 3px rgba(232, 180, 74, 0.10);
-}
-#ps-keluar { color: #a7f3d0; border-color: rgba(167, 243, 208, 0.3); }
+#v-misc textarea:focus { outline: none; border-color: var(--gold); }
+#ps-keluar { color: #8fe0a5; border-color: var(--line-2); }
 .ps-baris { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .ps-baris input { width: auto; }
-.ps-item { font-size: 12px; line-height: 1.5; word-break: break-all; padding: 2px 0; }
-.ps-ok { color: #86efac; }
-.ps-gagal { color: #fca5a5; }
-.ps-kembar { color: var(--ember-hot); font-weight: 600; }
+.ps-item {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.55;
+    word-break: break-all;
+    padding: 2px 0;
+}
+.ps-ok     { color: var(--ok); }
+.ps-gagal  { color: var(--danger); }
+.ps-kembar { color: var(--warn); font-weight: 600; }
 
 /* Kartu "Soon": sengaja TIDAK bisa diklik. Kartu mati yang tetap menerima klik
    terbaca sebagai fitur rusak, bukan fitur yang belum ada. */
 .misc-soon {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
-    margin-top: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
 }
 .misc-kartu {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 16px 18px;
-    opacity: 0.55;
+    gap: 12px;
+    padding: 14px 16px;
+    opacity: 0.5;
     cursor: not-allowed;
     user-select: none;
+    box-shadow: none;
 }
-.misc-kartu .ikon { font-size: 26px; flex: 0 0 auto; }
-.misc-kartu h3 { margin: 0 0 3px; font-size: 14px; }
-.misc-kartu p { margin: 0; font-size: 11.5px; color: var(--ink-dim); line-height: 1.45; }
+.misc-kartu .ikon { font-size: 18px; flex: 0 0 auto; }
+.misc-kartu h3 { margin: 0 0 2px; font-size: 13px; font-weight: 700; }
+.misc-kartu p { margin: 0; font-size: 11.5px; color: var(--text-2); line-height: 1.45; }
 .lencana {
     margin-left: auto;
     flex: 0 0 auto;
     align-self: flex-start;
-    font-size: 10px;
-    letter-spacing: 0.6px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 999px;
     color: var(--gold);
-    border: 1px solid var(--gold-soft);
-    background: rgba(232, 180, 74, 0.08);
+    border: 1px solid transparent;
+    background: var(--gold-dim);
 }
 
 /* ---- GAME YANG DIDUKUNG ----
@@ -444,43 +623,34 @@ input:focus, select:focus {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin-bottom: 13px;
+    margin-bottom: 12px;
 }
-.dukungan-kepala h3 {
-    margin: 0;
-    font-size: 15px;
-    letter-spacing: 0.3px;
-}
+.dukungan-kepala h3 { margin: 0; font-size: 14px; font-weight: 700; }
 .dukungan-kepala .jml {
-    font-size: 12px;
-    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
 }
-.panah {
-    margin-left: auto;
-    display: flex;
-    gap: 6px;
-}
+.panah { margin-left: auto; display: flex; gap: 6px; }
 .panah .btn {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     padding: 0;
     display: grid;
     place-items: center;
     line-height: 1;
+    font-size: 12px;
 }
 .rak {
     display: flex;
-    gap: 14px;
+    gap: 12px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    padding: 3px 2px 12px;
+    padding: 2px 2px 12px;
 }
 .rak::-webkit-scrollbar { height: 8px; }
-.rak::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.13);
-    border-radius: 8px;
-}
+.rak::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 999px; }
 /* Saat diseret, snap dan smooth-scroll harus mati -- keduanya melawan posisi
    yang sedang ditulis tangan dan hasilnya kartu terlihat memantul sendiri. */
 .rak.seret {
@@ -490,88 +660,68 @@ input:focus, select:focus {
     scroll-snap-type: none;
 }
 .game {
-    flex: 0 0 270px;
+    flex: 0 0 252px;
     scroll-snap-align: start;
-    padding: 17px 18px 18px;
+    padding: 15px 16px 16px;
     display: flex;
     flex-direction: column;
-    gap: 11px;
-    transition: transform 0.32s cubic-bezier(0.22, 0.9, 0.3, 1), border-color 0.32s;
+    gap: 10px;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
-.game:hover {
-    transform: translateY(-4px);
-    border-color: var(--gold-soft);
-}
-.game h4 {
-    margin: 0;
-    font-size: 14.5px;
-    line-height: 1.3;
-}
+.game:hover { background: var(--surface-2); border-color: var(--line-2); }
+.game h4 { margin: 0; font-size: 13.5px; font-weight: 700; line-height: 1.3; }
 .game h4 small {
     display: block;
     margin-top: 4px;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 400;
-    color: var(--ink-faint);
+    color: var(--text-3);
 }
+
+/* ---- STATUS ----
+   Lencana, bukan titik berdenyut. Denyut menarik mata terus ke informasi yang
+   tidak berubah, dan enam kartu berdenyut bersamaan membuat rak ini gelisah. */
 .status {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 11.5px;
-    color: var(--ink-dim);
+    gap: 6px;
+    align-self: flex-start;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    background: var(--surface-3);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-2);
 }
-.titik {
-    width: 8px;
-    height: 8px;
-    flex: 0 0 8px;
-    border-radius: 50%;
-}
+.titik { width: 6px; height: 6px; flex: 0 0 6px; border-radius: 50%; }
 .status b { font-weight: 600; }
-.status.online .titik {
-    background: #22c55e;
-    animation: denyut 2.4s ease-in-out infinite;
-}
-.status.online b { color: #4ade80; }
-.status.beta .titik {
-    background: var(--gold);
-    box-shadow: 0 0 0 3px rgba(232, 180, 74, 0.16);
-}
-.status.beta b { color: var(--gold); }
+.status.online .titik { background: var(--ok); }
+.status.online b      { color: #6ed08a; }
+.status.beta   .titik { background: var(--gold); }
+.status.beta   b      { color: var(--gold); }
 /* Biru, bukan kuning: "Updating" harus terbaca beda dari "Beta" dalam sekali
    lihat, dan dua nada emas bersebelahan praktis tidak bisa dibedakan. */
-.status.update .titik {
-    background: #60a5fa;
-    animation: denyut-biru 2.4s ease-in-out infinite;
-}
-.status.update b { color: #93c5fd; }
-.status.off .titik {
-    background: var(--ember-hot);
-    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.16);
-}
-.status.off b { color: #fda4af; }
-@keyframes denyut {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18); }
-    50%      { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.04); }
-}
-@keyframes denyut-biru {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18); }
-    50%      { box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.04); }
-}
+.status.update .titik { background: var(--info); }
+.status.update b      { color: #86bde6; }
+.status.off    .titik { background: var(--danger); }
+.status.off    b      { color: #f07173; }
+
 .fitur {
     margin: 0;
     padding: 11px 0 0;
     list-style: none;
     display: grid;
-    gap: 6px;
-    border-top: 1px solid var(--glass-line);
+    gap: 5px;
+    border-top: 1px solid var(--line);
 }
 .fitur li {
     position: relative;
-    padding-left: 15px;
-    font-size: 11.8px;
-    line-height: 1.45;
-    color: var(--ink-dim);
+    padding-left: 14px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-2);
 }
 .fitur li::before {
     content: "";
@@ -581,105 +731,151 @@ input:focus, select:focus {
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.75;
+    background: var(--line-3);
 }
 
-/* daftar centang */
+/* ---- DAFTAR CENTANG ---- */
 .daftar {
     max-height: 208px;
     overflow-y: auto;
-    padding: 10px;
+    padding: 8px;
     border-radius: var(--r-sm);
-    border: 1px solid var(--glass-line);
-    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--line-2);
+    background: var(--sunk);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 5px;
+    gap: 3px;
 }
 .cari { margin: 8px 0 0; }
 .daftar::-webkit-scrollbar { width: 8px; }
-.daftar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.13);
-    border-radius: 8px;
-}
+.daftar::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 999px; }
 .pilih {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     padding: 5px 7px;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     font-size: 12px;
+    color: var(--text-2);
     cursor: pointer;
-    transition: background 0.16s;
+    transition: background 0.12s ease, color 0.12s ease;
 }
-.pilih:hover { background: rgba(255, 255, 255, 0.055); }
-.pilih input { accent-color: var(--ember-hot); }
-.pilih.aktif { background: rgba(244, 63, 94, 0.13); }
+.pilih:hover { background: var(--surface-2); color: var(--text); }
+.pilih input { accent-color: var(--gold); }
+.pilih.aktif { background: var(--gold-dim); color: var(--text); }
 
 .mini {
     font-size: 11px;
     padding: 5px 11px;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     margin-bottom: 9px;
 }
 
 /* ---- KELUARAN ---- */
-.keluaran {
-    position: relative;
-    padding: 20px;
-}
+.keluaran { position: relative; padding: 18px; }
 pre {
     margin: 0;
     max-height: 380px;
     overflow: auto;
-    padding: 15px;
+    padding: 14px;
     border-radius: var(--r-sm);
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid var(--glass-line);
-    font-family: ui-monospace, Consolas, monospace;
-    font-size: 12px;
-    line-height: 1.62;
-    color: #d7dee9;
+    background: var(--sunk);
+    border: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.65;
+    color: #c9cdd2;
     white-space: pre;
 }
-pre::-webkit-scrollbar { width: 9px; height: 9px; }
-pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 8px; }
+pre::-webkit-scrollbar { width: 8px; height: 8px; }
+pre::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 999px; }
 
 .catatan {
     margin-top: 14px;
-    padding: 13px 15px;
+    padding: 12px 14px;
     border-radius: var(--r-sm);
+    border: 1px solid var(--line);
     border-left: 3px solid var(--gold);
-    background: rgba(232, 180, 74, 0.075);
+    background: var(--sunk);
     font-size: 12px;
     line-height: 1.7;
-    color: #e2d7bd;
+    color: var(--text-2);
+    max-width: 74ch;
 }
-.catatan b { color: var(--gold); }
+.catatan b { color: var(--gold); font-weight: 600; }
 
+/* ---- SORAK (toast) ----
+   Kanan bawah, bukan tengah. Di tengah ia menutupi isi yang barusan disalin --
+   persis yang ingin dilihat orang saat itu. */
 .sorak {
     position: fixed;
-    left: 50%;
-    bottom: 30px;
-    transform: translate(-50%, 24px);
+    left: auto;
+    right: 22px;
+    bottom: 22px;
+    transform: translateY(10px);
     z-index: 40;
-    padding: 11px 22px;
-    border-radius: 999px;
-    background: linear-gradient(120deg, var(--ember), var(--ember-hot));
-    color: #fff;
-    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: var(--r);
+    border: 1px solid var(--line-2);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 12.5px;
     font-weight: 600;
-    box-shadow: 0 14px 34px -12px rgba(244, 63, 94, 0.75);
+    box-shadow: var(--sh-2);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.28s, transform 0.28s;
+    transition: opacity 0.16s ease, transform 0.16s ease;
 }
-.sorak.tampil { opacity: 1; transform: translate(-50%, 0); }
+.sorak.tampil { opacity: 1; transform: translateY(0); }
 
-@media (max-width: 620px) {
-    .wrap { padding: 18px 14px 56px; }
-    .bagian { padding: 16px; }
+/* =========================================================================
+   HP — sidebar jadi bar mendatar di atas
+   =========================================================================
+   Sidebar tetap 258px di layar 380px berarti isi halamannya tinggal 120px.
+   Di bawah 900px ia dilepas dari posisi tetap dan digulung jadi bar navigasi
+   yang bisa digeser mendatar. Sebagian besar buyer membuka ini dari HP, jadi
+   keadaan inilah yang harus benar lebih dulu, bukan yang sebaliknya. */
+@media (max-width: 900px) {
+    .sisi {
+        position: sticky;
+        top: 0;
+        bottom: auto;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+    .sisi-merek {
+        padding: 0 10px 0 0;
+        margin: 0;
+        border-bottom: 0;
+        border-right: 1px solid var(--line);
+        flex: 0 0 auto;
+    }
+    .sisi-nama small { display: none; }
+    .sisi-judul, .sisi-kaki { display: none; }
+    .sisi-nav {
+        flex-direction: row;
+        gap: 4px;
+        overflow-x: auto;
+        flex: 1 1 auto;
+        scrollbar-width: none;
+    }
+    .sisi-nav::-webkit-scrollbar { display: none; }
+    .nav-item { white-space: nowrap; padding: 7px 11px; }
+    /* Garis penanda pindah ke BAWAH: di bar mendatar, garis di kiri tertutup
+       item sebelahnya dan praktis tidak terlihat. */
+    .nav-item.aktif { box-shadow: inset 0 -2px 0 var(--gold); }
+    .nav-item .ikon { display: none; }
+
+    body  { padding-left: 0; }
+    .wrap { padding: 20px 14px 72px; }
+    .merek p { font-size: 18px; }
+    .bagian { padding: 15px; }
+    .sorak { left: 14px; right: 14px; text-align: center; }
 }
 </style>
 </head>
@@ -688,11 +884,41 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
 <div id="fj"></div>
 <div id="scrim"></div>
 
+<!-- ============ SIDEBAR ============
+     Empat tampilan yang selama ini diganti lewat tombol "kembali ke menu"
+     sekarang selalu terlihat sekaligus. Tombolnya memanggil keTampilan() yang
+     SUDAH ADA -- tidak ada jalur navigasi kedua yang perlu dijaga tetap sama.
+     aria-hidden pada logo: hurufnya cuma hiasan, nama lengkapnya ada di
+     sebelahnya dan pembaca layar tidak perlu mengeja "M" dua kali. -->
+<aside class="sisi">
+    <div class="sisi-merek">
+        <div class="sisi-logo" aria-hidden="true">M</div>
+        <div class="sisi-nama">Mozeframe<small>generator</small></div>
+    </div>
+
+    <div class="sisi-judul">Menu</div>
+    <nav class="sisi-nav">
+        <button class="nav-item aktif" data-ke="menu"   onclick="keTampilan('menu')">
+            <span class="ikon">&#9632;</span>Home</button>
+        <button class="nav-item"       data-ke="loader" onclick="keTampilan('loader')">
+            <span class="ikon">&#9889;</span>Main Loader</button>
+        <button class="nav-item"       data-ke="gen"    onclick="keTampilan('gen')">
+            <span class="ikon">&#9881;</span>Config Generator</button>
+        <button class="nav-item"       data-ke="misc"   onclick="keTampilan('misc')">
+            <span class="ikon">&#129513;</span>Miscellaneous</button>
+    </nav>
+
+    <div class="sisi-kaki">
+        Need help?<br>
+        <a href="https://discord.gg/W7RSGgCt3C" target="_blank" rel="noopener">Mozeframe Discord</a>
+    </div>
+</aside>
+
 <div class="wrap">
 
     <div class="merek">
         <h1>MOZEFRAME</h1>
-        <p id="merek-sub">Pilih yang mau kamu buat</p>
+        <p id="merek-sub">Pick what you want to build</p>
     </div>
 
     <!-- Satu isian dipakai kedua tampilan: dua kotak key adalah dua tempat yang
@@ -700,8 +926,8 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
     <div id="keybar" class="kaca">
         <label for="key">Script Key</label>
         <input type="text" id="key" spellcheck="false" autocomplete="off"
-               placeholder="Tempel key Aegis milikmu di sini">
-        <button class="btn" onclick="lupakanKunci()">Lupakan</button>
+               placeholder="Paste your Mozeframe key here">
+        <button class="btn" onclick="lupakanKunci()">Forget</button>
         <div id="keystat"></div>
     </div>
 
@@ -711,22 +937,22 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
             <div class="kartu kaca" onclick="keTampilan('loader')">
                 <div class="ikon">&#9889;</div>
                 <h2>Main Loader</h2>
-                <p>Satu baris yang dijalankan di executor. Loader-nya sendiri yang
-                   memilih script sesuai game tempat akun berada — satu baris ini
-                   benar untuk semua dunia.</p>
+                <p>One line you run in your executor. The loader itself picks the
+                   right script for whatever game the account is in — this single
+                   line is correct for every world.</p>
             </div>
             <div class="kartu kaca" onclick="keTampilan('gen')">
                 <div class="ikon">&#9881;</div>
                 <h2>Config Generator</h2>
-                <p>Rakit setelan World 1 dan World 2, lalu salin hasilnya. Setelan
-                   ditanam langsung di script dan <b>menang atas panel</b> — sekali
-                   dipakai, config dari panel tidak lagi menimpanya.</p>
+                <p>Build your World 1 and World 2 settings, then copy the result.
+                   Settings are baked straight into the script and <b>override the
+                   panel</b> — once used, panel config no longer overwrites them.</p>
             </div>
             <div class="kartu kaca" onclick="keTampilan('misc')">
                 <div class="ikon">&#129513;</div>
                 <h2>Miscellaneous</h2>
-                <p>Alat bantu web di luar script: print private server, solver,
-                   dan shop. Sebagian masih dalam pengerjaan.</p>
+                <p>Web tools outside the script: print private server, solver and
+                   shop. Some are still being built.</p>
             </div>
         </div>
 
@@ -738,8 +964,8 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 <h3>Supported Games</h3>
                 <span class="jml" id="dukungan-jml"></span>
                 <div class="panah" id="dukungan-panah">
-                    <button class="btn" onclick="geserRak(-1)" title="Geser kiri">&#8592;</button>
-                    <button class="btn" onclick="geserRak(1)" title="Geser kanan">&#8594;</button>
+                    <button class="btn" onclick="geserRak(-1)" title="Scroll left">&#8592;</button>
+                    <button class="btn" onclick="geserRak(1)" title="Scroll right">&#8594;</button>
                 </div>
             </div>
             <div class="rak" id="rak-game"></div>
@@ -754,13 +980,13 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
         <div class="kaca keluaran">
             <pre id="out-loader"></pre>
             <div class="bar-atas" style="margin-bottom:0">
-                <button class="btn utama" onclick="salin('out-loader', this)">Salin</button>
+                <button class="btn utama" onclick="salin('out-loader', this)">Copy</button>
             </div>
             <div class="catatan">
-                <b>Tanpa setelan, script memakai bawaannya.</b> Kalau kamu mau
-                mengatur seed, gear, auto sell, dan sebagainya, pakai
-                <b>Config Generator</b> — hasilnya sudah termasuk baris loader ini
-                di bagian bawah, jadi cukup satu tempelan.
+                <b>With no settings the script uses its own defaults.</b> If you want to
+                set seeds, gear, auto sell and so on, use the
+                <b>Config Generator</b> — its output already includes this loader
+                line at the bottom, so one paste is enough.
             </div>
         </div>
 
@@ -768,12 +994,12 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
             <h2 style="margin:0 0 10px">Harvest</h2>
             <pre id="out-harvest"></pre>
             <div class="bar-atas" style="margin-bottom:0">
-                <button class="btn utama" onclick="salin('out-harvest', this)">Salin</button>
+                <button class="btn utama" onclick="salin('out-harvest', this)">Copy</button>
             </div>
             <div class="catatan">
-                Auto harvest &amp; seller. Jalankan di akun yang memang memanen —
-                <b>bukan</b> akun kaitun, karena keduanya sama-sama menggerakkan
-                karakter dan akan saling rebut.
+                Auto harvest &amp; seller. Run it on the account that actually harvests —
+                <b>not</b> a kaitun account, because both move the character and
+                will fight each other over it.
             </div>
         </div>
 
@@ -781,12 +1007,12 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
             <h2 style="margin:0 0 10px">MailBox</h2>
             <pre id="out-mailbox"></pre>
             <div class="bar-atas" style="margin-bottom:0">
-                <button class="btn utama" onclick="salin('out-mailbox', this)">Salin</button>
+                <button class="btn utama" onclick="salin('out-mailbox', this)">Copy</button>
             </div>
             <div class="catatan">
-                Pemindai &amp; pengirim mail. Batas server: <b>cooldown 10 detik</b>
-                dan <b>5 mail per hari per penerima</b> — sekitar 100 item per
-                target per hari, dan itu tidak bisa dinaikkan dari sisi script.
+                Mail scanner &amp; sender. Server limits: <b>10 second cooldown</b> and
+                <b>5 mails per day per recipient</b> — about 100 items per target
+                per day, and no script can raise that.
             </div>
         </div>
 
@@ -800,7 +1026,7 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 <button class="tab aktif" data-dunia="w1" onclick="keDunia('w1')">World 1 · GaG2</button>
                 <button class="tab" data-dunia="w2" onclick="keDunia('w2')">World 2 · Fall Harvest</button>
             </div>
-            <button class="btn utama" style="margin-left:auto" onclick="salin('out-gen', this)">Salin hasil</button>
+            <button class="btn utama" style="margin-left:auto" onclick="salin('out-gen', this)">Copy result</button>
         </div>
 
         <div id="form-w1"></div>
@@ -809,11 +1035,10 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
         <div class="kaca keluaran">
             <pre id="out-gen"></pre>
             <div class="catatan">
-                <b>Satu tempelan membawa dua dunia.</b> World 1 membaca
-                <code>MuzeAutoBuyConfig</code>, World 2 membaca
-                <code>MuzeFallHarvestConfig</code> — keduanya selalu ikut
-                dipancarkan, jadi akun yang berpindah dunia tetap terbawa
-                setelannya.
+                <b>One paste carries both worlds.</b> World 1 reads
+                <code>MuzeAutoBuyConfig</code>, World 2 reads
+                <code>MuzeFallHarvestConfig</code> — both are always emitted, so an
+                account that moves between worlds keeps its settings.
             </div>
         </div>
     </section>
@@ -836,26 +1061,26 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
         <div class="kaca keluaran">
             <h2 style="margin:0 0 4px">&#128424; Print Private Server</h2>
             <div class="catatan" style="margin-top:0">
-                Untuk tiap cookie: ambil CSRF &rarr; buat private server di place-nya
-                &rarr; keluarkan link <code>?privateServerLinkCode=…</code>, yang dipakai
-                tools rejoiner. Cookie dikirim ke Worker, dipakai sekali, lalu ikut
-                hilang — tidak ditulis ke penyimpanan mana pun.
+                For each cookie: fetch CSRF &rarr; create a private server on its place
+                &rarr; return a <code>?privateServerLinkCode=…</code> link, the one
+                rejoiner tools use. Cookies are sent to the Worker, used once, then
+                gone — never written to any storage.
             </div>
 
             <div id="ps-belumsetel" class="catatan"
                  style="border-color:rgba(232,180,74,.4); color:var(--gold); display:none">
-                <b>URL Worker belum disetel.</b> Deploy <code>worker_printps.js</code>
-                ke Cloudflare Workers, lalu isi <code>URL_WORKER</code> di dalam
-                berkas ini satu kali sebelum diunggah.
+                <b>Worker URL is not set.</b> Deploy <code>worker_printps.js</code> to
+                Cloudflare Workers, then fill in <code>URL_WORKER</code> inside this
+                file once before uploading it.
             </div>
 
             <div id="ps-alat">
                 <label class="ps-label">Key</label>
                 <input type="text" id="ps-key" spellcheck="false" autocomplete="off"
-                       placeholder="key yang terdaftar di Worker">
-                <div id="ps-keystat" style="font-size:11px; color:var(--ink-faint); margin-top:5px"></div>
+                       placeholder="key registered on the Worker">
+                <div id="ps-keystat" style="font-size:11px; color:var(--text-3); margin-top:5px"></div>
 
-                <label class="ps-label">Satu <code>cookie:placeId</code> per baris</label>
+                <label class="ps-label">One <code>cookie:placeId</code> per line</label>
                 <textarea id="ps-input" rows="6" spellcheck="false"
                           placeholder="_|WARNING:-DO-NOT-SHARE...:129343810645058"></textarea>
 
@@ -863,16 +1088,16 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                     <label class="ps-label" style="margin:0">Default Place ID</label>
                     <input type="text" id="ps-place" value="129343810645058" style="width:160px">
                     <button class="btn utama" id="ps-btn" onclick="jalankanPrintPS()"
-                            style="margin-left:auto">&#128424; Print Link PS</button>
+                            style="margin-left:auto">&#128424; Print PS Links</button>
                 </div>
 
                 <div id="ps-hasil" style="margin-top:12px"></div>
 
                 <div id="ps-keluar-box" style="display:none; margin-top:10px">
-                    <label class="ps-label">Link PS — urut sama seperti cookie yang kamu tempel:</label>
+                    <label class="ps-label">PS links — same order as the cookies you pasted:</label>
                     <textarea id="ps-keluar" rows="4" readonly></textarea>
                     <button class="btn" style="margin-top:6px"
-                            onclick="salin('ps-keluar', this)">Salin</button>
+                            onclick="salin('ps-keluar', this)">Copy</button>
                 </div>
             </div>
         </div>
@@ -882,7 +1107,7 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 <div class="ikon">&#129518;</div>
                 <div>
                     <h3>Solver</h3>
-                    <p>Penyelesai captcha untuk akun yang tersangkut saat login.</p>
+                    <p>Captcha solver for accounts that get stuck on login.</p>
                 </div>
                 <span class="lencana">Soon</span>
             </div>
@@ -890,7 +1115,7 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 <div class="ikon">&#128722;</div>
                 <div>
                     <h3>Shop</h3>
-                    <p>Beli dan perpanjang langganan tanpa lewat Discord.</p>
+                    <p>Buy and renew your subscription without going through Discord.</p>
                 </div>
                 <span class="lencana">Soon</span>
             </div>
@@ -899,7 +1124,7 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
 
 </div>
 
-<div class="sorak" id="sorak">Tersalin</div>
+<div class="sorak" id="sorak">Copied</div>
 
 <script>
 "use strict";
@@ -1020,7 +1245,7 @@ function catatKunci() {
     stat.classList.toggle("buruk", kosong);
     stat.classList.toggle("baik", !kosong);
     stat.textContent = kosong
-        ? "Belum diisi — hasil di bawah masih memakai teks contoh, dan Aegis akan menolaknya. Tempel key milikmu."
+        ? "Not set — the output below still uses placeholder text and will be rejected. Paste your own key."
         : "Tersimpan di browser ini (" + kunciScript.length + " karakter).";
 }
 
@@ -1093,7 +1318,7 @@ const PETS = ["Bald Eagle","Bear","Bee","Black Dragon","Bunny","Butterfly","Choc
 const AUCTION_SEEDS_EXTRA = ["Gold","Honeysuckle","Mega","Potato","Rainbow","Spirit Acorn","Spirit Banana","Spirit Cherry","Spirit Coconut","Spirit Dragon Fruit","Spirit Grape","Spirit Mango","Spirit Poison Apple","Spirit Pomegranate","Spirit Sunflower","Spirit Venom Spitter","Spirit Venus Fly Trap","Sugar Cane","Wheat"];
 
 /* "All" dibuang: di auction ia bukan nama barang, dan mencentangnya tidak
-   pernah berarti "semua lot". */
+   pernah berarti "all lots". */
 const AUCTION_ITEMS = [...new Set(
     [].concat(SEEDS, FHSEEDS, AUCTION_SEEDS_EXTRA, GEARS, PETS,
               AUCTION_EGGS, AUCTION_SEEDPACKS, AUCTION_CRATES)
@@ -1102,7 +1327,7 @@ const AUCTION_ITEMS = [...new Set(
 
 const RESEP = ["Blueberry Muffin","Pumpkin Muffin","Carrot Muffin","Rainbow Muffin"];
 const UKURAN_TAME = ["Big","Huge"];
-const MODE_NILAI = [["off","Mati"], ["min","Minimal"], ["max","Maksimal"]];
+const MODE_NILAI = [["off","Off"], ["min","Minimum"], ["max","Maximum"]];
 const RARITY = ["Common","Uncommon","Rare","Epic","Legendary","Mythical","Divine"];
 
 /* =========================================================================
@@ -1117,37 +1342,37 @@ const RARITY = ["Common","Uncommon","Rare","Epic","Legendary","Mythical","Divine
    ========================================================================= */
 const SKEMA = {
 w1: [
- { judul: "Dasar", ket: "Setelan yang berlaku untuk seluruh sesi.", medan: [
-   { k: "BlackScreen",   t: "bool",  l: "Layar hitam",             d: true  },
+ { judul: "Basics", ket: "Settings that apply to the whole session.", medan: [
+   { k: "BlackScreen",   t: "bool",  l: "Black screen",             d: true  },
    { k: "AntiFreeze",    t: "bool",  l: "Anti freeze",             d: true  },
-   { k: "BypassTutorial",t: "bool",  l: "Lewati tutorial",         d: true  },
-   { k: "Delay",         t: "angka", l: "Jeda siklus (detik)",     d: 10    },
+   { k: "BypassTutorial",t: "bool",  l: "Skip tutorial",         d: true  },
+   { k: "Delay",         t: "angka", l: "Cycle delay (seconds)",     d: 10    },
  ]},
- { judul: "Auto Buy", ket: "Seed dan gear yang dibeli tiap restock. Kosong = tidak membeli apa pun.", medan: [
-   { k: "BuySeeds", t: "bool", l: "Beli seed", d: false },
-   { k: "Seeds",    t: "peta", l: "Seed yang dibeli", opsi: SEEDS },
-   { k: "BuyGears", t: "bool", l: "Beli gear", d: false },
-   { k: "Gears",    t: "peta", l: "Gear yang dibeli", opsi: GEARS },
+ { judul: "Auto Buy", ket: "Seeds and gear bought on every restock. Empty = buys nothing.", medan: [
+   { k: "BuySeeds", t: "bool", l: "Buy seeds", d: false },
+   { k: "Seeds",    t: "peta", l: "Seeds to buy", opsi: SEEDS },
+   { k: "BuyGears", t: "bool", l: "Buy gear", d: false },
+   { k: "Gears",    t: "peta", l: "Gear to buy", opsi: GEARS },
  ]},
- { judul: "Auto Sell", ket: "AmbangJual \"0\" berarti jual apa pun. Isi seperti 50M untuk menunggu nilai tertentu.", medan: [
+ { judul: "Auto Sell", ket: "AmbangJual \"0\" means sell anything. Enter something like 50M to wait for a specific value.", medan: [
    { k: "AutoSell",          t: "bool",  l: "Auto sell",            d: false },
-   { k: "AutoSellThreshold", t: "teks",  l: "Ambang jual",          d: "0"   },
-   { k: "AmbangPengali",     t: "teks",  l: "Ambang pengali",       d: "0"   },
-   { k: "SellDelay",         t: "angka", l: "Jeda antar jual (dtk)",d: 30    },
-   { k: "AutoUnfavFruit",    t: "bool",  l: "Auto unfavorite buah", d: false },
+   { k: "AutoSellThreshold", t: "teks",  l: "Sell threshold",          d: "0"   },
+   { k: "AmbangPengali",     t: "teks",  l: "Multiplier threshold",       d: "0"   },
+   { k: "SellDelay",         t: "angka", l: "Delay between sells (s)",d: 30    },
+   { k: "AutoUnfavFruit",    t: "bool",  l: "Auto unfavorite fruit", d: false },
  ]},
- { judul: "Daily Deal", ket: "Tahan jual menahan penjualan biasa sampai ambang DD tercapai — dengan katup waktu supaya tidak menggantung selamanya.", medan: [
+ { judul: "Daily Deal", ket: "Hold sells pauses normal selling until the daily deal threshold is reached — with a time valve so it never hangs forever.", medan: [
    { k: "DailyDeal",           t: "bool",  l: "Auto daily deal",        d: false },
-   { k: "DailyDealThreshold",  t: "teks",  l: "Ambang daily deal",      d: "0"   },
-   { k: "TahanUntukDailyDeal", t: "bool",  l: "Tahan jual sampai ambang",d: false },
-   { k: "TahanDDMaksMenit",    t: "angka", l: "Katup waktu (menit)",    d: 30    },
+   { k: "DailyDealThreshold",  t: "teks",  l: "Daily deal threshold",      d: "0"   },
+   { k: "TahanUntukDailyDeal", t: "bool",  l: "Hold sells until threshold",d: false },
+   { k: "TahanDDMaksMenit",    t: "angka", l: "Time valve (minutes)",    d: 30    },
  ]},
- { judul: "Auto Tame", ket: "Ukuran dan rainbow sudah menempel pada pet sebelum ditame, jadi bisa disaring lebih dulu.", medan: [
+ { judul: "Auto Tame", ket: "Size and rainbow are already attached to a pet before taming, so they can be filtered beforehand.", medan: [
    { k: "AutoTame",    t: "bool",  l: "Auto tame",        d: false },
-   { k: "TamePets",    t: "larik", l: "Pet yang ditame",  opsi: WILDPETS },
-   { k: "TameSizes",   t: "larik", l: "Ukuran",           opsi: UKURAN_TAME },
-   { k: "TameRainbow", t: "bool",  l: "Hanya rainbow",    d: false },
-   { k: "MaxTameBid",  t: "teks",  l: "Bid maksimal",     d: "50M" },
+   { k: "TamePets",    t: "larik", l: "Pets to tame",  opsi: WILDPETS },
+   { k: "TameSizes",   t: "larik", l: "Size",           opsi: UKURAN_TAME },
+   { k: "TameRainbow", t: "bool",  l: "Rainbow only",    d: false },
+   { k: "MaxTameBid",  t: "teks",  l: "Max bid",     d: "50M" },
  ]},
  /* PetValueMode & PetValueThreshold SENGAJA TIDAK ADA di sini. Keduanya memang
     tercantum di tabel default kaitun_main.txt (baris 551-552), tapi tidak pernah
@@ -1155,89 +1380,89 @@ w1: [
     lolosFilterNilaiShop. Menampilkannya berarti membiarkan buyer mengatur
     sesuatu yang tidak berefek, dan itu kelas keluhan "ga work" yang paling
     membingungkan. Kalau nanti dipakai di script, tinggal tambahkan lagi. */
- { judul: "Saringan nilai", ket: "Menyaring barang menurut nilainya sebelum dibeli.", medan: [
-   { k: "SeedValueMode",      t: "pilih", l: "Mode nilai seed", opsi: MODE_NILAI, d: "off" },
-   { k: "SeedValueThreshold", t: "teks",  l: "Ambang seed",     d: "0" },
-   { k: "GearValueMode",      t: "pilih", l: "Mode nilai gear", opsi: MODE_NILAI, d: "off" },
-   { k: "GearValueThreshold", t: "teks",  l: "Ambang gear",     d: "0" },
+ { judul: "Value filter", ket: "Filters items by value before buying.", medan: [
+   { k: "SeedValueMode",      t: "pilih", l: "Seed value mode", opsi: MODE_NILAI, d: "off" },
+   { k: "SeedValueThreshold", t: "teks",  l: "Seed threshold",     d: "0" },
+   { k: "GearValueMode",      t: "pilih", l: "Gear value mode", opsi: MODE_NILAI, d: "off" },
+   { k: "GearValueThreshold", t: "teks",  l: "Gear threshold",     d: "0" },
  ]},
- { judul: "Auction", ket: "CurrentPrice satu-satunya angka yang benar; lot Robux-only punya startPrice kecil yang menyamar jadi murah.", medan: [
+ { judul: "Auction", ket: "CurrentPrice is the only correct number; Robux-only lots carry a small startPrice that disguises itself as cheap.", medan: [
    { k: "AutoAuction",     t: "bool",  l: "Auto auction",     d: false },
-   { k: "AuctionItems",    t: "larik", l: "Barang diincar",   opsi: AUCTION_ITEMS },
-   { k: "AuctionMaxBid",   t: "teks",  l: "Bid maksimal",     d: "0" },
-   { k: "AuctionMinSaldo", t: "teks",  l: "Saldo minimum",    d: "0" },
+   { k: "AuctionItems",    t: "larik", l: "Target items",   opsi: AUCTION_ITEMS },
+   { k: "AuctionMaxBid",   t: "teks",  l: "Max bid",     d: "0" },
+   { k: "AuctionMinSaldo", t: "teks",  l: "Minimum balance",    d: "0" },
  ]},
- { judul: "Mail", ket: "Batas server: cooldown 10 detik dan 5 mail per hari per penerima.", medan: [
+ { judul: "Mail", ket: "Server limits: 10 second cooldown and 5 mails per day per recipient.", medan: [
    { k: "AutoMail",          t: "bool",  l: "Auto mail",           d: false },
-   { k: "TargetUsername",    t: "teks",  l: "Username tujuan",     d: "" },
-   { k: "MailIntervalHours", t: "angka", l: "Jeda (jam)",          d: 0 },
-   { k: "AutoClaimMail",     t: "bool",  l: "Auto klaim mail masuk", d: false },
+   { k: "TargetUsername",    t: "teks",  l: "Target username",     d: "" },
+   { k: "MailIntervalHours", t: "angka", l: "Interval (hours)",          d: 0 },
+   { k: "AutoClaimMail",     t: "bool",  l: "Auto claim incoming mail", d: false },
  ]},
 ],
 w2: [
- { judul: "Dasar", ket: "Rangka kerja World 2.", medan: [
-   { k: "AutoBeli",     t: "bool", l: "Auto beli",       d: true },
-   { k: "AutoTanam",    t: "bool", l: "Auto tanam",      d: true },
-   { k: "AutoPanen",    t: "bool", l: "Auto panen",      d: true },
-   { k: "AutoJual",     t: "bool", l: "Auto jual",       d: true },
+ { judul: "Basics", ket: "World 2 framework.", medan: [
+   { k: "AutoBeli",     t: "bool", l: "Auto buy",       d: true },
+   { k: "AutoTanam",    t: "bool", l: "Auto plant",      d: true },
+   { k: "AutoPanen",    t: "bool", l: "Auto harvest",      d: true },
+   { k: "AutoJual",     t: "bool", l: "Auto sell",       d: true },
    { k: "AutoQuest",    t: "bool", l: "Auto quest",      d: true },
-   { k: "AutoAmbilSeed",t: "bool", l: "Ambil seed jatuh",d: true },
-   { k: "ModeBeliSaja", t: "bool", l: "Mode beli saja",  d: false },
-   { k: "BlackScreen",  t: "bool", l: "Layar hitam",     d: true },
+   { k: "AutoAmbilSeed",t: "bool", l: "Pick up dropped seeds",d: true },
+   { k: "ModeBeliSaja", t: "bool", l: "Buy-only mode",  d: false },
+   { k: "BlackScreen",  t: "bool", l: "Black screen",     d: true },
    { k: "AntiAFK",      t: "bool", l: "Anti AFK",        d: true },
  ]},
- { judul: "Seed", ket: "RestockChance sangat timpang — Carrot 100%, Amber 0,07%. Kalau cuma sebagian akun yang dapat, itu RNG stok, bukan bug.", medan: [
-   { k: "SeedTarget",  t: "larik", l: "Seed diincar",       opsi: FHSEEDS },
-   { k: "IgnoreSeeds", t: "larik", l: "Seed diabaikan",     opsi: FHSEEDS },
-   { k: "MaxBeliPerSiklus", t: "angka", l: "Maks beli per siklus", d: 20 },
-   { k: "BatasTanam",  t: "angka", l: "Batas tanam (0 = bebas)", d: 0 },
+ { judul: "Seed", ket: "RestockChance is wildly uneven — Carrot 100%, Amber 0.07%. If only some accounts get it, that is stock RNG, not a bug.", medan: [
+   { k: "SeedTarget",  t: "larik", l: "Target seeds",       opsi: FHSEEDS },
+   { k: "IgnoreSeeds", t: "larik", l: "Ignored seeds",     opsi: FHSEEDS },
+   { k: "MaxBeliPerSiklus", t: "angka", l: "Max buys per cycle", d: 20 },
+   { k: "BatasTanam",  t: "angka", l: "Plant limit (0 = unlimited)", d: 0 },
  ]},
- { judul: "Gear & siram", ket: "Gear menumpuk lewat atribut Count. MaksGearDisimpan kecil mematikan auto buy gear tanpa satu pun pesan.", medan: [
-   { k: "AutoBeliGear",     t: "bool",  l: "Beli gear",         d: true },
-   { k: "GearTarget",       t: "larik", l: "Gear diincar",      opsi: FHGEARS },
-   { k: "GearSprinkler",    t: "pilih", l: "Sprinkler dipakai", opsi: FHGEARS.map(g => [g, g]), d: "Syrup Sprinkler" },
-   { k: "GearSiram",        t: "pilih", l: "Penyiram dipakai",  opsi: FHGEARS.map(g => [g, g]), d: "Syrup Watering Can" },
-   { k: "MaksGearDisimpan", t: "angka", l: "Maks gear disimpan (0 = tak terbatas)", d: 0 },
+ { judul: "Gear & watering", ket: "Gear stacks through the Count attribute. A small MaksGearDisimpan kills gear auto buy with no message at all.", medan: [
+   { k: "AutoBeliGear",     t: "bool",  l: "Buy gear",         d: true },
+   { k: "GearTarget",       t: "larik", l: "Target gear",      opsi: FHGEARS },
+   { k: "GearSprinkler",    t: "pilih", l: "Sprinkler used", opsi: FHGEARS.map(g => [g, g]), d: "Syrup Sprinkler" },
+   { k: "GearSiram",        t: "pilih", l: "Watering can used",  opsi: FHGEARS.map(g => [g, g]), d: "Syrup Watering Can" },
+   { k: "MaksGearDisimpan", t: "angka", l: "Max gear kept (0 = unlimited)", d: 0 },
    { k: "AutoSprinkler",    t: "bool",  l: "Auto sprinkler",    d: true },
-   { k: "MaksSprinkler",    t: "angka", l: "Maks sprinkler",    d: 2 },
-   { k: "AutoSiram",        t: "bool",  l: "Auto siram",        d: true },
-   { k: "SiramPerSiklus",   t: "angka", l: "Siram per siklus",  d: 4 },
+   { k: "MaksSprinkler",    t: "angka", l: "Max sprinklers",    d: 2 },
+   { k: "AutoSiram",        t: "bool",  l: "Auto water",        d: true },
+   { k: "SiramPerSiklus",   t: "angka", l: "Waterings per cycle",  d: 4 },
  ]},
- { judul: "Bake Sale", ket: "ResepMuffin harus ARRAY nama muffin. Bentuk map ditolak diam-diam oleh terapkanConfig.", medan: [
-   { k: "AutoMasak",          t: "bool",  l: "Auto masak",       d: false },
-   { k: "ResepMuffin",        t: "larik", l: "Resep dimasak",    opsi: RESEP },
-   { k: "AutoBeliBahanBaker", t: "bool",  l: "Beli bahan kurang",d: false },
-   { k: "AutoTukarMuffin",    t: "bool",  l: "Tukar muffin",     d: false },
-   { k: "JedaMasak",          t: "angka", l: "Jeda masak (dtk)", d: 20 },
+ { judul: "Bake Sale", ket: "ResepMuffin must be an ARRAY of muffin names. A map is silently rejected by terapkanConfig.", medan: [
+   { k: "AutoMasak",          t: "bool",  l: "Auto cook",       d: false },
+   { k: "ResepMuffin",        t: "larik", l: "Recipes to cook",    opsi: RESEP },
+   { k: "AutoBeliBahanBaker", t: "bool",  l: "Buy missing ingredients",d: false },
+   { k: "AutoTukarMuffin",    t: "bool",  l: "Trade muffins",     d: false },
+   { k: "JedaMasak",          t: "angka", l: "Cook delay (s)", d: 20 },
  ]},
- { judul: "Cabut & speedrun", medan: [
-   { k: "AutoCabut",          t: "bool",  l: "Auto cabut",            d: true },
-   { k: "AmbangSelisihCabut", t: "angka", l: "Ambang selisih cabut",  d: 1 },
-   { k: "FokusRarityNaik",    t: "bool",  l: "Fokus rarity naik",     d: true },
-   { k: "AmbangSpeedrun",     t: "pilih", l: "Ambang speedrun", opsi: RARITY.map(r => [r, r]), d: "Epic" },
-   { k: "BeliTargetSaatSpeedrun", t: "bool", l: "Beli target saat speedrun", d: false },
+ { judul: "Uproot & speedrun", medan: [
+   { k: "AutoCabut",          t: "bool",  l: "Auto uproot",            d: true },
+   { k: "AmbangSelisihCabut", t: "angka", l: "Uproot margin",  d: 1 },
+   { k: "FokusRarityNaik",    t: "bool",  l: "Prioritize rarity upgrade",     d: true },
+   { k: "AmbangSpeedrun",     t: "pilih", l: "Speedrun threshold", opsi: RARITY.map(r => [r, r]), d: "Epic" },
+   { k: "BeliTargetSaatSpeedrun", t: "bool", l: "Buy targets during speedrun", d: false },
  ]},
- { judul: "Jual buah", medan: [
-   { k: "AmbangJualBuah", t: "angka", l: "Ambang jual buah", d: 70 },
-   { k: "TahanBeratMin",  t: "angka", l: "Tahan berat minimum", d: 10 },
-   { k: "TahanMaksJam",   t: "angka", l: "Tahan maksimal (jam)", d: 6 },
+ { judul: "Sell fruit", medan: [
+   { k: "AmbangJualBuah", t: "angka", l: "Fruit sell threshold", d: 70 },
+   { k: "TahanBeratMin",  t: "angka", l: "Minimum weight kept", d: 10 },
+   { k: "TahanMaksJam",   t: "angka", l: "Max hold (hours)", d: 6 },
  ]},
- { judul: "Steal", ket: "Pemilik lahan dibaca dari atribut UserId, bukan nomor plot.", medan: [
-   { k: "AutoStealMalam",         t: "bool",  l: "Auto steal saat malam", d: false },
-   { k: "StealMaksPerSiklus",     t: "angka", l: "Maks steal per siklus", d: 20 },
-   { k: "StealUtamakanOrangBaru", t: "bool",  l: "Utamakan orang baru",   d: true },
-   { k: "StealPindahServer",      t: "bool",  l: "Pindah server sesudah", d: false },
+ { judul: "Steal", ket: "Plot ownership is read from the UserId attribute, not the plot number.", medan: [
+   { k: "AutoStealMalam",         t: "bool",  l: "Auto steal at night", d: false },
+   { k: "StealMaksPerSiklus",     t: "angka", l: "Max steals per cycle", d: 20 },
+   { k: "StealUtamakanOrangBaru", t: "bool",  l: "Prioritize new players",   d: true },
+   { k: "StealPindahServer",      t: "bool",  l: "Hop server after", d: false },
  ]},
- { judul: "Server & pemulihan", ket: "Rejoin saat macet sudah punya loop coba-ulang sendiri — jangan ditambah lagi dari luar.", medan: [
-   { k: "AutoCariServerSepi", t: "bool",  l: "Cari server sepi",   d: false },
-   { k: "BatasIsiServer",     t: "angka", l: "Batas isi server",   d: 3 },
-   { k: "JedaHopMenit",       t: "angka", l: "Jeda hop (menit)",   d: 15 },
-   { k: "RejoinSaatMacet",    t: "bool",  l: "Rejoin saat macet",  d: true },
-   { k: "MacetDetik",         t: "angka", l: "Ambang macet (dtk)", d: 300 },
+ { judul: "Server & recovery", ket: "Rejoin-when-stuck already has its own retry loop — do not stack another on top.", medan: [
+   { k: "AutoCariServerSepi", t: "bool",  l: "Find an empty server",   d: false },
+   { k: "BatasIsiServer",     t: "angka", l: "Server capacity limit",   d: 3 },
+   { k: "JedaHopMenit",       t: "angka", l: "Hop interval (minutes)",   d: 15 },
+   { k: "RejoinSaatMacet",    t: "bool",  l: "Rejoin when stuck",  d: true },
+   { k: "MacetDetik",         t: "angka", l: "Stuck threshold (s)", d: 300 },
    { k: "AntiFreeze",         t: "bool",  l: "Anti freeze",        d: false },
-   { k: "FreezeDelayDetik",   t: "angka", l: "Jeda freeze (dtk)",  d: 15 },
-   { k: "FreezePingBatas",    t: "angka", l: "Batas ping",         d: 10000 },
-   { k: "PakaiTeleportGui",   t: "bool",  l: "Pakai teleport GUI", d: true },
+   { k: "FreezeDelayDetik",   t: "angka", l: "Freeze delay (s)",  d: 15 },
+   { k: "FreezePingBatas",    t: "angka", l: "Ping limit",         d: 10000 },
+   { k: "PakaiTeleportGui",   t: "bool",  l: "Use teleport GUI", d: true },
  ]},
 ]};
 
@@ -1287,7 +1512,7 @@ function buatMedan(dunia, m) {
 
         const sakelarSemua = document.createElement("button");
         sakelarSemua.className = "btn mini";
-        sakelarSemua.textContent = "Pilih semua / batal";
+        sakelarSemua.textContent = "Select all / none";
         bungkus.appendChild(sakelarSemua);
 
         const kotak = document.createElement("div");
@@ -1335,7 +1560,7 @@ function buatMedan(dunia, m) {
             cari = document.createElement("input");
             cari.type = "text";
             cari.className = "cari";
-            cari.placeholder = "Cari dari " + m.opsi.length + " barang...";
+            cari.placeholder = "Search from " + m.opsi.length + " barang...";
             cari.oninput = () => {
                 const q = cari.value.toLowerCase().trim();
                 for (const p of kotak.querySelectorAll("label.pilih"))
@@ -1453,10 +1678,10 @@ function pancarkan() {
 
 /* ---- NAVIGASI ---- */
 const SUB = {
-    menu:   "Pilih yang mau kamu buat",
-    loader: "Satu baris, benar untuk semua dunia",
-    gen:    "Setelan ditanam langsung di script",
-    misc:   "Alat bantu di luar script",
+    menu:   "Pick what you want to build",
+    loader: "One line, correct for every world",
+    gen:    "Settings baked straight into the script",
+    misc:   "Tools outside the script",
 };
 function keTampilan(nama) {
     for (const el of document.querySelectorAll(".tampilan")) el.classList.remove("aktif");
@@ -1464,6 +1689,9 @@ function keTampilan(nama) {
     document.getElementById("merek-sub").textContent = SUB[nama] || "";
     // Kotak key tidak muncul di menu: di sana belum ada yang memakainya.
     document.getElementById("keybar").classList.toggle("tampil", nama !== "menu");
+    for (const t of document.querySelectorAll(".nav-item")) {
+        t.classList.toggle("aktif", t.dataset.ke === nama);
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function keDunia(d) {
@@ -1484,7 +1712,7 @@ function salin(id, tombol) {
         jamSorak = setTimeout(() => s.classList.remove("tampil"), 1600);
         if (tombol) {
             const asli = tombol.textContent;
-            tombol.textContent = "Tersalin";
+            tombol.textContent = "Copied";
             setTimeout(() => { tombol.textContent = asli; }, 1600);
         }
     };
@@ -1707,7 +1935,7 @@ const GAME_DIDUKUNG = [
 
    Key di bawah dicocokkan dengan secret KEY_DIIZINKAN di Worker. Worker MENOLAK
    SEMUA kalau secret itu belum diisi, jadi lupa mengaturnya tidak pernah
-   berarti "terbuka untuk umum".
+   berarti "public".
    ========================================================================= */
 const URL_WORKER = "https://printps.fengjiu1122.workers.dev";
 
@@ -1725,8 +1953,8 @@ function ambilKeyPS() {
     el.oninput = () => {
         const stat = document.getElementById("ps-keystat");
         const k = ambilKeyPS();
-        stat.style.color = k ? "#86efac" : "var(--ink-faint)";
-        stat.textContent = k ? "Tersimpan di browser ini." : "Belum diisi.";
+        stat.style.color = k ? "#86efac" : "var(--text-3)";
+        stat.textContent = k ? "Saved in this browser." : "Not set.";
         try { localStorage.setItem(KUNCI_PS_SIMPAN, k); } catch (e) {}
     };
     el.oninput();
@@ -1745,11 +1973,11 @@ window.jalankanPrintPS = async function () {
     const gagal = (t) => { hasilEl.innerHTML = '<div class="ps-item ps-gagal">' + t + "</div>"; };
 
     const kunci = ambilKeyPS();
-    if (!kunci) return gagal("Isi Key dulu.");
+    if (!kunci) return gagal("Enter your key first.");
 
     const teks = (document.getElementById("ps-input").value || "").trim();
     const placeBawaan = (document.getElementById("ps-place").value || "").trim();
-    if (!teks) return gagal("Tempel cookie:placeId dulu.");
+    if (!teks) return gagal("Paste cookie:placeId first.");
 
     /* Cookie Roblox mengandung ':' sendiri, jadi yang boleh dianggap placeId
        hanya potongan TERAKHIR dan hanya kalau ia angka. */
@@ -1762,11 +1990,11 @@ window.jalankanPrintPS = async function () {
         if (m) { cookie = m[1].trim(); place = m[2]; }
         if (cookie) items.push({ cookie, place_id: parseInt(place) || 0 });
     }
-    if (!items.length) return gagal("Tidak ada cookie terbaca.");
+    if (!items.length) return gagal("No cookie could be read.");
 
     tombol.disabled = true;
-    hasilEl.innerHTML = '<div class="ps-item">Memproses ' + items.length +
-        " cookie... (bisa sampai 2 menit per cookie)</div>";
+    hasilEl.innerHTML = '<div class="ps-item">Processing ' + items.length +
+        " cookie(s)... (up to 2 minutes each)</div>";
     kotakKeluar.style.display = "none";
 
     try {
@@ -1781,7 +2009,7 @@ window.jalankanPrintPS = async function () {
            baris pun -- gagal yang terlihat seperti sukses kosong. */
         const d = await res.json().catch(() => null);
         if (!res.ok) return gagal((d && d.error) ? d.error : "HTTP " + res.status);
-        if (!d) return gagal("Balasan Worker tidak terbaca.");
+        if (!d) return gagal("Worker reply could not be parsed.");
         if (d.error) return gagal(d.error);
 
         const baris = [], link = [];
@@ -1790,10 +2018,10 @@ window.jalankanPrintPS = async function () {
                 /* Link kembar = cookie tertukar: dua akun mendarat di server yang
                    sama, kebalikan dari tujuan fitur ini. Ditandai mencolok. */
                 const kembar = (h.duplikat && h.duplikat.length > 1)
-                    ? ' <span class="ps-kembar">— sama dgn #' +
+                    ? ' <span class="ps-kembar">— same as #' +
                       h.duplikat.filter(n => n !== i + 1).join(", #") + "</span>"
                     : "";
-                const teman = h.teman === "gagal" ? " (izin teman gagal)" : "";
+                const teman = h.teman === "gagal" ? " (friend permission failed)" : "";
                 /* Link utama memakai format /games/{placeId}?privateServerLinkCode=
                    karena HANYA format itu yang bisa memilih place. Yang /share
                    ikut ditampilkan sebagai cadangan: ia selalu mendarat di root
@@ -1822,8 +2050,8 @@ window.jalankanPrintPS = async function () {
             kotakKeluar.style.display = "";
         }
     } catch (e) {
-        gagal(e.message + " — Worker tidak terjangkau, atau origin halaman ini "
-            + "belum terdaftar di ASAL_DIIZINKAN.");
+        gagal(e.message + " — Worker unreachable, or this page origin is "
+            + "not registered in ASAL_DIIZINKAN.");
     } finally {
         tombol.disabled = false;
     }
