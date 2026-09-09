@@ -790,30 +790,6 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
             </div>
         </div>
 
-        <div class="kaca keluaran">
-            <h2 style="margin:0 0 10px">Script</h2>
-            <pre id="out-script"></pre>
-            <div class="bar-atas" style="margin-bottom:0">
-                <button class="btn utama" onclick="salin('out-script', this)">Salin</button>
-            </div>
-            <div class="catatan">
-                Auto harvester &amp; seller versi lengkap. Sama seperti Harvest,
-                jalankan di akun pemanen &mdash; <b>bukan</b> akun kaitun.
-            </div>
-        </div>
-
-        <div class="kaca keluaran">
-            <h2 style="margin:0 0 10px">MailBox v2</h2>
-            <pre id="out-mailv2"></pre>
-            <div class="bar-atas" style="margin-bottom:0">
-                <button class="btn utama" onclick="salin('out-mailv2', this)">Salin</button>
-            </div>
-            <div class="catatan">
-                Mail generasi kedua. Batas servernya sama dengan MailBox lama
-                &mdash; <b>cooldown 10 detik</b> dan <b>5 mail per hari per
-                penerima</b>; yang berbeda cuma sisi script-nya.
-            </div>
-        </div>
     </section>
 
     <!-- ============ GENERATOR ============ -->
@@ -991,7 +967,9 @@ const fokusUntuk = (j) => {
    GANTI baris di bawah dengan alamat loader_semua.lua yang KAMU unggah. Ini
    SATU-SATUNYA berkas yang perlu naik ke GitHub -- isi script-nya tidak, itu
    tinggal di KV Worker dan cuma keluar untuk key yang sah. */
-const URL_LOADER = "https://raw.githubusercontent.com/framemozejiu/frame/main/loader.lua";
+// Repo LOADER (mozenian/muje), bukan repo source. framemozejiu/frame itu
+// tempat source lama -- keliru dipakai di sini sebelumnya.
+const URL_LOADER = "https://raw.githubusercontent.com/mozenian/muje/refs/heads/main/gamingexperienc9.lua";
 
 const BARIS_LOADER = 'loadstring(game:HttpGet("' + URL_LOADER + '"))()';
 
@@ -1005,8 +983,6 @@ function barisPaksa(f) {
 const LOADER_LAIN = [
     { id: "out-harvest", f: "harvest" },
     { id: "out-mailbox", f: "mail" },
-    { id: "out-script",  f: "script" },
-    { id: "out-mailv2",  f: "mailv2" },
 ];
 
 /* =========================================================================
