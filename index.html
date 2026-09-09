@@ -1196,7 +1196,18 @@ const fokusUntuk = (j) => {
 // tempat source lama -- keliru dipakai di sini sebelumnya.
 const URL_LOADER = "https://raw.githubusercontent.com/mozenian/muje/refs/heads/main/gamingexperienc9.lua";
 
-const BARIS_LOADER = 'loadstring(game:HttpGet("' + URL_LOADER + '"))()';
+/* PEMECAH CACHE `?t=`. raw.githubusercontent MENAHAN salinan lama sampai
+   sekitar 5 menit, dan tanpa ini eksekusi pertama sesudah loader diperbarui
+   masih mendapat berkas lama -- gejalanya buyer dimintai key padahal key-nya
+   sudah ada di baris `script_key`, lalu "sembuh sendiri" pada percobaan
+   berikutnya begitu cache-nya kedaluwarsa. Itu persis pola "cuma sekali" yang
+   dilaporkan, dan paling menyesatkan karena hilang sebelum sempat diperiksa.
+
+   os.time() dipakai, bukan tick(): tick() pecahan dan bisa menghasilkan URL
+   berbeda untuk dua panggilan dalam detik yang sama, jadi cache CDN tidak
+   pernah kepakai sama sekali. */
+const BARIS_LOADER =
+    'loadstring(game:HttpGet("' + URL_LOADER + '?t="..os.time()))()';
 
 /* Tool yang TIDAK terikat PlaceId. Loader yang sama, tapi script-nya diminta
    eksplisit lewat getgenv().MozeF -- tanpa itu loader memilih dari PlaceId dan
