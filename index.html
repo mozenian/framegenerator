@@ -789,6 +789,31 @@ pre::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-rad
                 target per hari, dan itu tidak bisa dinaikkan dari sisi script.
             </div>
         </div>
+
+        <div class="kaca keluaran">
+            <h2 style="margin:0 0 10px">Script</h2>
+            <pre id="out-script"></pre>
+            <div class="bar-atas" style="margin-bottom:0">
+                <button class="btn utama" onclick="salin('out-script', this)">Salin</button>
+            </div>
+            <div class="catatan">
+                Auto harvester &amp; seller versi lengkap. Sama seperti Harvest,
+                jalankan di akun pemanen &mdash; <b>bukan</b> akun kaitun.
+            </div>
+        </div>
+
+        <div class="kaca keluaran">
+            <h2 style="margin:0 0 10px">MailBox v2</h2>
+            <pre id="out-mailv2"></pre>
+            <div class="bar-atas" style="margin-bottom:0">
+                <button class="btn utama" onclick="salin('out-mailv2', this)">Salin</button>
+            </div>
+            <div class="catatan">
+                Mail generasi kedua. Batas servernya sama dengan MailBox lama
+                &mdash; <b>cooldown 10 detik</b> dan <b>5 mail per hari per
+                penerima</b>; yang berbeda cuma sisi script-nya.
+            </div>
+        </div>
     </section>
 
     <!-- ============ GENERATOR ============ -->
@@ -956,27 +981,32 @@ const fokusUntuk = (j) => {
    LOADER
    Satu tempat, dipakai tampilan Loader DAN ekor keluaran generator.
    ========================================================================= */
-/* WAJIB subdomain "loader." -- terukur 2026-08-29:
-     https://luaegis.net/...        -> HTTP 301, isi 86 byte berupa TEKS URL
-     https://loader.luaegis.net/... -> HTTP 200, Lua sungguhan
-   game:HttpGet tidak selalu mengikuti redirect. Tanpa subdomain ini yang
-   ditempel buyer menerima 86 byte teks, loadstring gagal, dan tidak ada satu
-   pun pesan yang muncul -- terlihat persis seperti script yang diam saja. */
-const BASIS_LOADER = "https://loader.luaegis.net/scripts/v4/loaders/";
+/* LUAEGIS SUDAH MATI (2026-09-09). Semua loader per-script yang dulu tinggal
+   di loader.luaegis.net ikut mati bersamanya, termasuk catatan soal subdomain
+   "loader." yang dulu wajib -- sudah tidak relevan.
 
-function barisLoader(uuid) {
-    return 'loadstring(game:HttpGet("' + BASIS_LOADER + uuid + '.lua"))()';
+   Sekarang SATU berkas loader untuk semuanya. Ia membaca PlaceId lalu meminta
+   script yang cocok ke Worker sendiri; key + HWID diperiksa di sana.
+
+   GANTI baris di bawah dengan alamat loader_semua.lua yang KAMU unggah. Ini
+   SATU-SATUNYA berkas yang perlu naik ke GitHub -- isi script-nya tidak, itu
+   tinggal di KV Worker dan cuma keluar untuk key yang sah. */
+const URL_LOADER = "https://raw.githubusercontent.com/framemozejiu/frame/main/loader.lua";
+
+const BARIS_LOADER = 'loadstring(game:HttpGet("' + URL_LOADER + '"))()';
+
+/* Tool yang TIDAK terikat PlaceId. Loader yang sama, tapi script-nya diminta
+   eksplisit lewat getgenv().MozeF -- tanpa itu loader memilih dari PlaceId dan
+   memberi kaitun, bukan tool ini. */
+function barisPaksa(f) {
+    return 'getgenv().MozeF = "' + f + '"' + '\n' + BARIS_LOADER;
 }
 
-const URL_LOADER = BASIS_LOADER + "9ea5c8fe-2cd5-42d3-a929-5b626f3890c0.lua";
-const BARIS_LOADER = barisLoader("9ea5c8fe-2cd5-42d3-a929-5b626f3890c0");
-
-/* Loader terpisah. Ini BUKAN kaitun: keduanya tool sendiri dengan loader
-   Aegis sendiri, jadi tidak bisa dipilihkan router dari PlaceId seperti
-   baris utama di atas. */
 const LOADER_LAIN = [
-    { id: "out-harvest", uuid: "df3ad4e7-12d4-4e45-bf16-921ebc486256" },
-    { id: "out-mailbox", uuid: "389ddb87-5648-42d3-852b-2e28b353fca1" },
+    { id: "out-harvest", f: "harvest" },
+    { id: "out-mailbox", f: "mail" },
+    { id: "out-script",  f: "script" },
+    { id: "out-mailv2",  f: "mailv2" },
 ];
 
 /* =========================================================================
@@ -1035,7 +1065,7 @@ function perbaruiLoader() {
     document.getElementById("out-loader").textContent = kunci + "\n" + BARIS_LOADER;
     LOADER_LAIN.forEach(function (x) {
         const el = document.getElementById(x.id);
-        if (el) el.textContent = kunci + "\n" + barisLoader(x.uuid);
+        if (el) el.textContent = kunci + "\n" + barisPaksa(x.f);
     });
 }
 
