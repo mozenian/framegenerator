@@ -1824,14 +1824,13 @@ const GAME_DIDUKUNG = [
             "Anti AFK with forced rejoin",
         ],
     },
-    /* FAAR sengaja BUKAN "online". Script-nya nyata dan sudah terukur, tapi
-       berdiri sendiri: place 74729868188364 tidak ada di games.lua dan tidak
-       ada entri f=faar di _SCRIPT_WHITELIST, jadi Main Loader tidak akan
-       menyerahkannya. Naikkan ke "online" begitu kedua daftar itu diisi. */
+    /* Dulu "beta" dengan alasan belum dilayani loader. Alasan itu sudah tidak
+       berlaku: place 74729868188364 ada di PETA loader_semua.lua dan f=faar
+       ada di daftar putih worker, jadi Main Loader memang menyerahkannya. */
     {
         nama: "Fish an Anime RNG",
-        ket: "1 place · standalone build, not served by the loader yet",
-        status: "beta",
+        ket: "1 place · served by the Main Loader",
+        status: "online",
         fitur: [
             "Fast restart — recasts the instant a catch completes",
             "Reject unwanted rolls",
@@ -1841,6 +1840,21 @@ const GAME_DIDUKUNG = [
             "Pond suggestion and auto move",
             "FPS boost with map slimming",
             "Anti AFK",
+        ],
+    },
+    {
+        nama: "Anime Dice",
+        ket: "1 place · served by the Main Loader",
+        status: "online",
+        fitur: [
+            "Fast roll — skips the roll animation entirely",
+            "Auto collect from every plot slot",
+            "Auto place your best units",
+            "Auto upgrade units, ordered by cps or rarity",
+            "Auto sell by cps, rarity, and mutation",
+            "Auto buy upgrades and dice, in priority order",
+            "Auto claim quests, daily, group, and offline earnings",
+            "Auto rebirth",
         ],
     },
 ];
